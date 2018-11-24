@@ -1,0 +1,17 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "997849770688.dkr.ecr.ap-southeast-1.amazonaws.com/d3-react-frontend-copy_client:latest"
+  },
+  "MemoryReservation": 512,
+  "Environment" : [
+      { "name" : "RACES_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/races" },
+      { "name" : "RESULTS_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/results" },
+      { "name" : "QUAL_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/qualifying" },
+      { "name" : "LAPTIMES_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/filtered_laptimes" },
+      { "name" : "ROUNDED_LAPTIMES_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/rounded_laptimes" },
+      { "name" : "PITSTOPS_SERVICE_URL", "value" : "http://flask-celery-backend.ap-southeast-1.elasticbeanstalk.com:5000/api/pitstops" },
+      { "name" : "WEB_SERVER_HOST", "value" : "0.0.0.0" },
+      { "name" : "WEB_SERVER_PORT", "value": "3000" }
+  ]
+}

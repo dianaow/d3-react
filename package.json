@@ -1,0 +1,78 @@
+{
+  "name": "F1-React-App",
+  "version": "1.0.0",
+  "description": "Visualizing and Predicting Formula One",
+  "main": "index.js",
+  "scripts": {
+    "start": "node tools/server",
+    "build": "rimraf dist && cross-env NODE_ENV=production webpack --progress --config webpack.config.prod.js",
+    "dev-build": "rimraf dist && cross-env NODE_ENV=development webpack --progress -d --config webpack.config.dev.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --progress -d --config webpack.config.dev.js --watch",
+    "deploy": "node tools/s3-upload.js"
+  },
+  "keywords": [
+    "fullstack",
+    "template",
+    "python",
+    "flask",
+    "react",
+    "npm",
+    "webpack",
+    "d3"
+  ],
+  "author": "Diana",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ],
+    "plugins": [
+      "transform-class-properties"
+    ]
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.5",
+    "@fortawesome/free-solid-svg-icons": "^5.4.0",
+    "@fortawesome/react-fontawesome": "^0.1.3",
+    "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^1.0.8",
+    "css-loader": "^1.0.0",
+    "d3-array": "^1.2.1",
+    "d3-axis": "^1.0.8",
+    "d3-brush": "^1.0.4",
+    "d3-collection": "^1.0.7",
+    "d3-force": "^1.1.2",
+    "d3-scale": "^2.1.0",
+    "d3-scale-chromatic": "^1.3.3",
+    "d3-selection": "^1.3.2",
+    "d3-shape": "^1.2.0",
+    "d3-svg-legend": "^2.25.6",
+    "d3-transition": "^1.1.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.13.3",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "3.0.7",
+    "http-proxy": "^1.17.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "react": "^16.4.2",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.4.2",
+    "react-onclickoutside": "^6.7.1",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-dom": "^4.3.1",
+    "rimraf": "^2.4.3",
+    "s3": "^4.4.0",
+    "style-loader": "^0.22.1",
+    "webpack": "^4.16.5",
+    "webpack-command": "^0.4.1",
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-hot-middleware": "^2.2.0"
+  }
+}
