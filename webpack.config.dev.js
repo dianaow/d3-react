@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const dotenv = require('dotenv').config({path: '.env'});
 
 // call dotenv and it will return an Object with a parsed key 
@@ -34,6 +35,15 @@ const config = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: 'babel-loader'
+            },
+            {
+                test: /\.html$/,
+                use: [
+                  {
+                    loader: "html-loader",
+                    //options: { minimize: true }
+                  }
+                ]
             },
             {
                 test: /\.css$/,

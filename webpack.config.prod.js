@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const dotenv = require('dotenv').config({path: '.env'});
 
 // call dotenv and it will return an Object with a parsed key 
@@ -14,9 +16,9 @@ return prev;
 
 const config = {
     mode: "production",
-    entry:  __dirname + '/static/index.jsx',
+    entry:  path.join(__dirname, '/static/index.jsx'),
     output: {
-        path: __dirname + '/static/dist',
+        path: __dirname + '/static/dist/',
         filename: 'bundle.js',
         publicPath: '/'
     },
@@ -29,6 +31,15 @@ const config = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: 'babel-loader'
+            },
+            {
+                test: /\.html$/,
+                use: [
+                  {
+                    loader: "html-loader",
+                    //options: { minimize: true }
+                  }
+                ]
             },
             {
                 test: /\.css$/,
@@ -45,7 +56,13 @@ const config = {
             path: __dirname + '/static/dist',
             filename: 'styles.css',
         }),
-        new webpack.DefinePlugin(envKeys)
+        new webpack.DefinePlugin(envKeys),
+        new HtmlWebpackPlugin({
+          inject: false,
+          hash: true,
+          template: './static/index.html',
+          filename: 'index.html'
+        })
     ]
 };
 
