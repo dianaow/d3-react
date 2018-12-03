@@ -1,7 +1,6 @@
 .env
 .DS_Store
 /migrations
-dist/
 node_modules/
 npm-debug.log
 v8-compile-cache-0/

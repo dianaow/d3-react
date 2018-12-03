@@ -4,11 +4,13 @@ import axios from 'axios'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
 import BeeswarmPlot from '../Main-components/Laptimes-BeeswarmPlot'
+import Header from '../Shared-components/Header'
+import * as Const from '../Shared-components/Constants';
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const ROUNDED_LAPTIMES_SERVICE_URL = `${process.env.ROUNDED_LAPTIMES_SERVICE_URL}`
 
-class Main extends Component {
+class MainDashboard extends Component {
 
   constructor(){
     super()
@@ -16,7 +18,7 @@ class Main extends Component {
       races: [],
       seasons: [],
       round_laptimes: []
-    };
+    }
   }
 
   componentDidMount(){
@@ -27,9 +29,9 @@ class Main extends Component {
 								    season : race.season,
 								    roundId : race.roundId,
 								    raceName : race.raceName,
-							      	key: 'races',
-							        selected: false,
-							        id: race.id-1}))
+						      	key: 'races',
+						        selected: false,
+						        id: race.id-1}))
 							    )
 						  .then(races => this.setDefault(races))
 
@@ -42,16 +44,16 @@ class Main extends Component {
     const uniqRaces = [...new Set(races.map(d => d.raceName))]
     races =  uniqRaces.map((y, index) => ({id: index, raceName:y, selected: false, key: 'races' }) )
   	const seasons =  uniqYears.map((y, index) => ({id: index, season:y, selected: false, key: 'seasons' }) )
-  	seasons[0].selected = true;
-  	races[0].selected = true;
+  	seasons[0].selected = true
+  	races[0].selected = true
   	this.setState({seasons, races})
   }
 
   resetThenSet = (value, key) => {
-    let data = [...this.state[key]];
-    data.forEach(item => item.selected = false);
-    data[value].selected = true;
-    this.setState({key: data});
+    let data = [...this.state[key]]
+    data.forEach(item => item.selected = false)
+    data[value].selected = true
+    this.setState({key: data})
   }
 
   filterAndSort_Laps = (selectedRace, selectedSeason, laptimes, filtQ) => {
@@ -73,35 +75,30 @@ class Main extends Component {
 
   render() {
 
-  	const{races, seasons, round_laptimes} = this.state
+  	const {races, seasons, round_laptimes} = this.state
 
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
-
-    const headerStyle = {
-      textAlign: 'left',
-      fontWeight: 'bold',
-      minWidth: '350px'
-    }
 
     if (races.length != 0 && seasons.length != 0 && round_laptimes.length != 0) {
     var distPlot = 
       <BeeswarmPlot
         lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
         width="1400" 
-        height="650" /> 
+        height="690"/> 
     } else {
-      var distPlot = <Loading width="1400" height="650"/>
+      var distPlot = <Loading width="1400" height="690"/>
     }
 
     if (races.length != 0 && seasons.length != 0)  {
-      var Header = <div style={headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
+      var Title = <div style={Const.headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
     } else {
-      var Header = <div style={headerStyle}><h3></h3></div>
+      var Title = <div style={Const.headerStyle}><h3></h3></div>
     }
 
-      return (
+    return (
   	  <div className="header">
+        <Header/>
   	    <div className="wrapper">
   	      <Dropdown
   	        title="Year"
@@ -115,16 +112,14 @@ class Main extends Component {
   	        list={races}
   	        resetThenSet={this.resetThenSet}
   	      />
-          {Header}
+          {Title}
   	    </div>
-        <div>
-          {distPlot}
-        </div>
+        {distPlot}
   	  </div>
   	);
 
-    }
+  }
 
 }
 
-export default Main;
+export default MainDashboard;

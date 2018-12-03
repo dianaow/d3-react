@@ -4,6 +4,7 @@ import axios from 'axios'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
 import BarChart from '../Main-components/Results-BarChart'
+import Header from '../Shared-components/Header'
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -108,6 +109,7 @@ class ResultsBar extends Component {
 
       return (
   	  <div className="header">
+        <Header/>
   	    <div className="wrapper">
   	      <Dropdown
   	        title="Year"

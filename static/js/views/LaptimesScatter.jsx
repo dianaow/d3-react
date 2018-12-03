@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { max, min, quantile } from 'd3-array';
+import * as d3Zoom from 'd3-zoom'
+import {event as currentEvent, select as currentSelect} from 'd3-selection';
 import axios from 'axios'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
 import ScatterPlot from '../Main-components/Laptimes-ScatterPlot'
+import Header from '../Shared-components/Header'
+import * as Const from '../Shared-components/Constants';
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const LAPTIMES_SERVICE_URL = `${process.env.LAPTIMES_SERVICE_URL}`
@@ -15,30 +19,54 @@ class LaptimesScatter extends Component {
     this.state = {
       races: [],
       seasons: [],
-      laptimes: []
-    };
+      laptimes: [],
+      zoomTransform: null
+    }
+
+    this.width = 1400
+    this.height = 650
+
+    this.zoom = d3Zoom.zoom()
+      .scaleExtent([-5, 5])
+      .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
+      .on("zoom", this.zoomed.bind(this))
+
   }
 
   componentDidMount(){
 
-  	const racesRequest = axios.get(RACES_SERVICE_URL)
-							  .then(response =>
-							    response.data.data.map(race => ({
-								    season : race.season,
-								    roundId : race.roundId,
-								    raceName : race.raceName,
-							      	key: 'races',
-							        selected: false,
-							        id: race.id-1}))
-							    )
-						  .then(races => this.setDefault(races))
+    const racesRequest = axios.get(RACES_SERVICE_URL)
+                .then(response =>
+                  response.data.data.map(race => ({
+                    season : race.season,
+                    roundId : race.roundId,
+                    raceName : race.raceName,
+                      key: 'races',
+                      selected: false,
+                      id: race.id-1}))
+                  )
+              .then(races => this.setDefault(races))
 
-  	const laptimesRequest = axios.get(LAPTIMES_SERVICE_URL)
-								 .then(response => {this.setState({laptimes: response.data.data})})
+    const laptimesRequest = axios.get(LAPTIMES_SERVICE_URL)
+                 .then(response => {this.setState({laptimes: response.data.data})})
+
+    currentSelect(this.refs.svg)
+      .call(this.zoom)
 
   }
 
-   setDefault = (races) => {
+  componentDidUpdate() {
+    currentSelect(this.refs.svg)
+      .call(this.zoom)
+  }
+
+  zoomed () {
+    this.setState({ 
+      zoomTransform: currentEvent.transform
+    })
+  }
+
+  setDefault = (races) => {
     const uniqYears = [...new Set(races.map(d => d.season))]
     const uniqRaces = [...new Set(races.map(d => d.raceName))]
     races =  uniqRaces.map((y, index) => ({id: index, raceName:y, selected: false, key: 'races' }) )
@@ -56,16 +84,12 @@ class LaptimesScatter extends Component {
   }
 
   filterAndSort_Laps = (selectedRace, selectedSeason, laptimes, filtQ) => {
-
 	  var filteredLapsResults = laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
-    
     if (filtQ) {
       return this.filterQuantile(filteredLapsResults)
     } else {
-      console.log(filteredLapsResults)
       return filteredLapsResults
     }
-
   }
 
   filterQuantile = (data) => {
@@ -75,55 +99,54 @@ class LaptimesScatter extends Component {
 
   render() {
 
-  	const{races, seasons, laptimes} = this.state
+  	const{races, seasons, laptimes, zoomTransform} = this.state
 
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
 
-    const headerStyle = {
-      textAlign: 'left',
-      fontWeight: 'bold',
-      minWidth: '350px'
-    }
-
-  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0) {
+  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0 && zoomTransform != null) {
+      console.log(zoomTransform)
 	    var LapsChart = 
 	      <ScatterPlot 
-		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
-        minLapTime = {min(laptimes, d => d.time)}
-        width="1400" 
-        height="650" /> 
+  		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
+          x={0} 
+          y={0} 
+          width={this.width} 
+          height={this.height}
+          zoomTransform={zoomTransform}
+          zoomType="detail"/> 
   	 } else {
-  	 	var LapsChart = <Loading width="1200" height="650"/>
+  	 	var LapsChart = <Loading width={this.width} height={this.height}/>
   	}
 
     if (races.length != 0 && seasons.length != 0)  {
-      var Header = <div style={headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
+      var Title = <div style={Const.headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
     } else {
-      var Header = <div style={headerStyle}><h3></h3></div>
+      var Title = <div style={Const.headerStyle}><h3></h3></div>
     }
 
       return (
-  	  <div className="header">
-  	    <div className="wrapper">
-  	      <Dropdown
-  	        title="Year"
-  	        col="season"
-  	        list={seasons}
-  	        resetThenSet={this.resetThenSet}
-  	      />
-  	      <Dropdown
-  	        title="Select a race"
-  	        col="raceName"
-  	        list={races}
-  	        resetThenSet={this.resetThenSet}
-  	      />
-          {Header}
-  	    </div>
-  	    <div>
-  	    	{LapsChart}
-  	    </div>
-  	  </div>
+        <div className="header">
+          <Header/>
+    	    <div className="wrapper">
+    	      <Dropdown
+    	        title="Year"
+    	        col="season"
+    	        list={seasons}
+    	        resetThenSet={this.resetThenSet}
+    	      />
+    	      <Dropdown
+    	        title="Select a race"
+    	        col="raceName"
+    	        list={races}
+    	        resetThenSet={this.resetThenSet}
+    	      />
+            {Title}
+    	    </div>
+    	    <svg width={this.width} height={this.height} ref='svg'>
+    	    	{LapsChart}
+    	    </svg>
+      	</div>
   	);
 
     }

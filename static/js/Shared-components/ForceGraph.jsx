@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3-force';
 import _ from 'lodash';
+import * as Const from './Constants';
 
 class ForceGraph extends Component {
 
@@ -38,6 +39,28 @@ class ForceGraph extends Component {
 
   }
 
+  toaddStroke = (d, s) => {
+    if (s == 2016) {
+      if (Const.driver_2016_1.includes(d)) {
+        return true
+      } else if (Const.driver_2016_2.includes(d)) {
+        return false
+      }
+    } else if (s == 2017) {
+      if (Const.driver_2017_1.includes(d)) {
+        return true
+      } else if (Const.driver_2017_2.includes(d)) {
+        return false
+      }      
+    } else if (s == 2018) {
+      if (Const.driver_2018_1.includes(d)) {
+        return true
+      } else if (Const.driver_2018_2.includes(d)) {
+        return false
+      }      
+    }
+  }
+
   render() {
 
     const {nodes} = this.state
@@ -45,12 +68,13 @@ class ForceGraph extends Component {
     var dots = (
       nodes.map( d =>
         <circle
-          className={d.driverRef}
           key={d.id}
           cx={d.x}
           cy={d.y}
           r={d.radius}
           fill={d.color}
+          stroke={this.toaddStroke(d.driverRef, d.season) ? 'black': 'white'}
+          strokeWidth={this.toaddStroke(d.driverRef, d.season) ? '1px': '0px'}
           opacity='1'
         />)
     )

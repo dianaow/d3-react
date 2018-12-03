@@ -12,8 +12,6 @@ RUN npm install --silent
 
 COPY . /home/ubuntu/d3-react
 
-RUN npm run build
-
 VOLUME [".:/home/ubuntu/d3-react/", "/home/ubuntu/d3-react/node_modules"]
 
 EXPOSE 3000

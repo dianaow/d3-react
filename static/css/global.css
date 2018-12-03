@@ -29,6 +29,12 @@ p {
   margin: 0;
   padding: 0;
 }
+i[class^='devicon'], div[class*='devicon']{
+  font-size: 10rem;
+  padding: 10px;
+
+}
+
 .App {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -90,6 +96,8 @@ p {
   cursor: default;
   position: relative;
   background-color: #fff;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .dd-header span {
   margin-right: 20px;
