@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { max, min, quantile } from 'd3-array';
 import * as d3Zoom from 'd3-zoom'
-import {event as currentEvent, select as currentSelect} from 'd3-selection';
+import { select, event } from 'd3-selection';
+//import {event as currentEvent, select as currentSelect} from 'd3-selection';
 import axios from 'axios'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
@@ -27,8 +28,8 @@ class LaptimesScatter extends Component {
     this.height = 650
 
     this.zoom = d3Zoom.zoom()
-      .scaleExtent([-5, 5])
-      .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
+      .scaleExtent([1, 40])
+      .translateExtent([[0, 0], [this.width, this.height]])
       .on("zoom", this.zoomed.bind(this))
 
   }
@@ -50,19 +51,19 @@ class LaptimesScatter extends Component {
     const laptimesRequest = axios.get(LAPTIMES_SERVICE_URL)
                  .then(response => {this.setState({laptimes: response.data.data})})
 
-    currentSelect(this.refs.svg)
+    select(this.refs.svg)
       .call(this.zoom)
 
   }
 
   componentDidUpdate() {
-    currentSelect(this.refs.svg)
+    select(this.refs.svg)
       .call(this.zoom)
   }
 
   zoomed () {
     this.setState({ 
-      zoomTransform: currentEvent.transform
+      zoomTransform: event.transform
     })
   }
 
@@ -100,21 +101,18 @@ class LaptimesScatter extends Component {
   render() {
 
   	const{races, seasons, laptimes, zoomTransform} = this.state
-
+    console.log(zoomTransform)
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
 
-  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0 && zoomTransform != null) {
-      console.log(zoomTransform)
+  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0) {
 	    var LapsChart = 
 	      <ScatterPlot 
   		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
-          x={0} 
-          y={0} 
           width={this.width} 
           height={this.height}
           zoomTransform={zoomTransform}
-          zoomType="detail"/> 
+          /> 
   	 } else {
   	 	var LapsChart = <Loading width={this.width} height={this.height}/>
   	}
