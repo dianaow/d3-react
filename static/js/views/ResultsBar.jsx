@@ -102,9 +102,9 @@ class ResultsBar extends Component {
   	}
 
     if (races.length != 0 && seasons.length != 0)  {
-      var Header = <div style={headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
+      var Title = <div style={headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
     } else {
-      var Header = <div style={headerStyle}><h3></h3></div>
+      var Title = <div style={headerStyle}><h3></h3></div>
     }
 
       return (
@@ -123,7 +123,7 @@ class ResultsBar extends Component {
   	        list={races}
   	        resetThenSet={this.resetThenSet}
   	      />
-          {Header}
+          {Title}
   	    </div>
   	    <div>
   	    	{ResultsChart}

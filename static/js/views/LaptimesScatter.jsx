@@ -24,12 +24,14 @@ class LaptimesScatter extends Component {
       zoomTransform: null
     }
 
-    this.width = 1400
-    this.height = 650
+    this.wrapper = { width: 1400, height: 650 }
+    this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
+    this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
+                           height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
     this.zoom = d3Zoom.zoom()
       .scaleExtent([1, 40])
-      .translateExtent([[0, 0], [this.width, this.height]])
+      .translateExtent([[0, 0], [this.svgDimensionswidth, this.svgDimensions.height]])
       .on("zoom", this.zoomed.bind(this))
 
   }
@@ -109,8 +111,8 @@ class LaptimesScatter extends Component {
 	    var LapsChart = 
 	      <ScatterPlot 
   		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
-          width={this.width} 
-          height={this.height}
+          width={this.wrapper.width} 
+          height={this.wrapper.height}
           zoomTransform={zoomTransform}
           /> 
   	 } else {
@@ -141,7 +143,8 @@ class LaptimesScatter extends Component {
     	      />
             {Title}
     	    </div>
-    	    <svg width={this.width} height={this.height} ref='svg'>
+          <h4>LAP NUMBER</h4>
+    	    <svg width={this.svgDimensions.width} height={this.svgDimensions.height} ref='svg'>
     	    	{LapsChart}
     	    </svg>
       	</div>

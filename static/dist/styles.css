@@ -60,6 +60,13 @@ i[class^='devicon'], div[class*='devicon']{
   font-weight:bold;
 
 }
+.App h4 {
+  padding: 2px;
+  font-size: 1.4rem;
+  text-align:center;
+  font-weight:bold;
+
+}
 .wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -165,11 +172,13 @@ i[class^='devicon'], div[class*='devicon']{
 .svg-inline--fa {
   margin-right: 10px;
 }
-.Axis path,
 .Axis line {
   stroke: #E0E0E0;
 }
 
+.Axis path {
+  display: none;
+}
 .Axis text {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 12px;

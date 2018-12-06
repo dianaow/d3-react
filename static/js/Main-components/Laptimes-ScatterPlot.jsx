@@ -63,11 +63,11 @@ componentDidUpdate(prevProps) {
 
     this.xScale = scaleLinear()
                     .domain([0,60])
-                    .rangeRound([this.margins.left, this.svgDimensions.width])
+                    .rangeRound([this.margins.left, this.svgDimensions.width-this.margins.left])
 
     this.yScale = scaleLinear()
                     .domain([0, 110])
-                    .rangeRound([this.svgDimensions.height, this.margins.top])
+                    .rangeRound([this.svgDimensions.height-15, 15])
 
     if (zoomTransform) {
       transformY = zoomTransform.rescaleY(this.yScale)
@@ -87,19 +87,19 @@ componentDidUpdate(prevProps) {
     const ticksRange = this.yScale
 
     const xProps = {
-      orient: 'Bottom',
+      orient: 'Top',
       scale: xScale,
-      translate: `translate(0, ${this.wrapper.height})`,
-      tickSize: this.wrapper.height,
-      tickValues: range(0,65,5)
+      translate: `translate(0, ${this.svgDimensions.height})`,
+      tickSize: -this.svgDimensions.height+15,
+      tickValues: range(1,65,5)
     }
 
     const yProps = {
       orient: 'Left',
       scale: yScale,
       translate: `translate(${this.margins.left}, 0)`,
-      tickSize: 0,
-      ticks:10
+      tickSize: this.svgDimensions.width,
+      ticks:8
     }
 
     const lapsData_new = lapsData.map(d => {
@@ -131,18 +131,8 @@ componentDidUpdate(prevProps) {
         </g>
         <text 
           style={Const.textStyle}
-          transform={"translate(" + 10 + "," + (this.wrapper.height/2) + ")rotate(-90)"}>
+          transform={"translate(" + 20 + "," + (this.svgDimensions.height/2) + ")rotate(-90)"}>
           Time to complete (in sec)
-        </text>
-        <text 
-          style={Const.textStyle}
-          transform={"translate(" + (this.wrapper.width/2) + "," + (this.wrapper.height) + ")"}>
-          Lap
-        </text>
-        <text
-          style={Const.topLegendStyle}
-          transform={"translate(" + (this.margins.left) + "," + 10 + ")"}>
-            Pitlaps and Laptimes above the 99.5th percentile are filtered out.
         </text>
     </React.Fragment>
     )
