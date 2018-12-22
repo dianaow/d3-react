@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 import MainDashboard from './views/MainDashboard'
 import LaptimesScatter from './views/LaptimesScatter'
 import ResultsBar from './views/ResultsBar'
+import AllSortedResultsBar from './views/AllSortedResultsBar'
 import About from './views/About'
 
 const Main = () => (
@@ -13,6 +14,7 @@ const Main = () => (
       <Route path='/laptimes-beeswarmplot' component={MainDashboard}/>
       <Route path='/laptimes-scatterplot' component={LaptimesScatter}/>
       <Route path='/results-barchart' component={ResultsBar}/>
+      <Route path='/animation' component={AllSortedResultsBar}/>
     </Switch>
   </main>
 )

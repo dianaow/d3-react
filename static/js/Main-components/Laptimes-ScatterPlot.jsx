@@ -17,11 +17,11 @@ class ScatterPlot extends Component {
     }
   }
 
-componentDidUpdate(prevProps) {
-  if (this.props.zoomTransform !== prevProps.zoomTransform) {
-    this.newScales = this.updateD3(this.props)
+  componentDidUpdate(prevProps) {
+    if (this.props.zoomTransform !== prevProps.zoomTransform) {
+      this.newScales = this.updateD3(this.props)
+    }
   }
-}
 
   handleMouseOver = (e) => {
     this.setState({tooltip:{
@@ -51,7 +51,7 @@ componentDidUpdate(prevProps) {
 
   updateD3(props) {
 
-    const { lapsData, zoomTransform } = props
+    const { lapsData, zoomTransform, zoomType } = props
 
     let transformX = ""
     let transformY = "" 
@@ -66,11 +66,19 @@ componentDidUpdate(prevProps) {
                     .rangeRound([this.margins.left, this.svgDimensions.width-this.margins.left])
 
     this.yScale = scaleLinear()
-                    .domain([0, 110])
+                    .domain([0,110])
                     .rangeRound([this.svgDimensions.height-15, 15])
 
     if (zoomTransform) {
-      transformY = zoomTransform.rescaleY(this.yScale)
+      if ((zoomTransform == -1) & (zoomType == 'reset')) {
+        transformY = this.yScale
+        console.log("Reset zoom")
+      } else if ((zoomTransform == -1) & (zoomType == 'preset')) {
+        transformY = this.yScale.domain([85, 95])
+        console.log("Zoom preset")
+      } else {
+        transformY = zoomTransform.rescaleY(this.yScale)
+      }
     } else {
       transformY = this.yScale
     }
@@ -84,7 +92,6 @@ componentDidUpdate(prevProps) {
     
     const yScale = this.newScales
     const xScale = this.xScale
-    const ticksRange = this.yScale
 
     const xProps = {
       orient: 'Top',

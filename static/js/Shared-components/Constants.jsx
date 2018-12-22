@@ -99,12 +99,19 @@ export const colorScale = scaleOrdinal()
 export const textStyle = {
   textAlign: 'center',
   fontWeight: 'bold',
-  textTransform: 'uppercase'
+  textTransform: 'uppercase',
+  fontSize: '1.4rem'
+} 
+
+export const legendStyle = {
+  textAlign: 'left',
+  fontSize: '1rem'
 } 
 
 export const topLegendStyle = {
   color: '#E0E0E0',
-  fontSize: '12px'
+  fontSize: '1em',
+  padding: '10px'
 } 
 
 export const headerStyle = {

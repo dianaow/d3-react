@@ -18,7 +18,10 @@ const Header = () => (
 				    <ToggleButton value={3}>Laptimes v2</ToggleButton>
 				</LinkContainer>
 				<LinkContainer to="/results-barchart">
-				    <ToggleButton value={4}>Results</ToggleButton>
+				    <ToggleButton value={4}>Results v1</ToggleButton>
+				</LinkContainer>
+				<LinkContainer to="/animation">
+				    <ToggleButton value={5}>Results v2</ToggleButton>
 				</LinkContainer>
 		    </ToggleButtonGroup>
 	    </ButtonToolbar>

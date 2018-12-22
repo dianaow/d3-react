@@ -9,6 +9,7 @@ import Loading from '../Shared-components/Loading';
 import ScatterPlot from '../Main-components/Laptimes-ScatterPlot'
 import Header from '../Shared-components/Header'
 import * as Const from '../Shared-components/Constants';
+import { Button } from 'react-bootstrap'
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const LAPTIMES_SERVICE_URL = `${process.env.LAPTIMES_SERVICE_URL}`
@@ -21,7 +22,8 @@ class LaptimesScatter extends Component {
       races: [],
       seasons: [],
       laptimes: [],
-      zoomTransform: null
+      zoomTransform: null,
+      zoomType: null
     }
 
     this.wrapper = { width: 1400, height: 650 }
@@ -64,9 +66,30 @@ class LaptimesScatter extends Component {
   }
 
   zoomed () {
+    if (event.sourceEvent == null) {
+      //console.log('Button click event')
+      this.setState({ 
+        zoomTransform: -1
+      })
+    } else {
+      //console.log('Mousewheel zoom and pan event')
+      this.setState({ 
+        zoomTransform: event.transform
+      })
+    }
+  }
+
+  resetted = () => {
+    //console.log("Just clicked reset button")
+    select(this.refs.svg)
+    .transition()
+    .duration(750)
+    .call(this.zoom.transform, d3Zoom.zoomIdentity.translate(0,0).scale(1))
+
     this.setState({ 
-      zoomTransform: event.transform
+      zoomType: 'reset'
     })
+
   }
 
   setDefault = (races) => {
@@ -102,8 +125,8 @@ class LaptimesScatter extends Component {
 
   render() {
 
-  	const{races, seasons, laptimes, zoomTransform} = this.state
-    console.log(zoomTransform)
+  	const{races, seasons, laptimes, zoomTransform, zoomType} = this.state
+
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
 
@@ -114,15 +137,23 @@ class LaptimesScatter extends Component {
           width={this.wrapper.width} 
           height={this.wrapper.height}
           zoomTransform={zoomTransform}
+          zoomType={zoomType}
           /> 
+      var Others = 
+        <div>
+          <Button onClick={this.resetted}>Reset</Button>
+          <span style={Const.topLegendStyle}>Hover over the dots and scroll mouse wheel to zoom in and out</span>
+          <h4>LAP NUMBER</h4>
+        </div>
   	 } else {
   	 	var LapsChart = <Loading width={this.width} height={this.height}/>
+      var Others = <div></div>
   	}
 
     if (races.length != 0 && seasons.length != 0)  {
       var Title = <div style={Const.headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
     } else {
-      var Title = <div style={Const.headerStyle}><h3></h3></div>
+      var Title = <div style={Const.textStyle}><h3></h3></div>
     }
 
       return (
@@ -143,7 +174,7 @@ class LaptimesScatter extends Component {
     	      />
             {Title}
     	    </div>
-          <h4>LAP NUMBER</h4>
+            {Others}
     	    <svg width={this.svgDimensions.width} height={this.svgDimensions.height} ref='svg'>
     	    	{LapsChart}
     	    </svg>

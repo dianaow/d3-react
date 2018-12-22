@@ -1,18 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "997849770688.dkr.ecr.ap-southeast-1.amazonaws.com/d3-react-frontend-copy_client:latest"
+    "Name": "997849770688.dkr.ecr.ap-southeast-1.amazonaws.com/d3-react-frontend-copy_client:v2"
   },
-  "MemoryReservation": 512,
-  "Ports": [
-    {
-      "ContainerPort": "3000"
-    }
-  ],
-  "Volumes": [
-    {
-      "ContainerDirectory": "/home/ubuntu/d3-react"
-    }
-  ],
-  "Command": ["npm", "run", "start"]
+  "MemoryReservation": 512
 }
