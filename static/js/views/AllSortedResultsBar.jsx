@@ -6,6 +6,7 @@ import Loading from '../Shared-components/Loading';
 import BarChart from '../Main-components/Results-SortedBarChart'
 import Header from '../Shared-components/Header'
 import * as Const from '../Shared-components/Constants';
+import { Button } from 'react-bootstrap'
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -17,7 +18,8 @@ class ResultsBar extends Component {
     this.state = {
       results: [],
       races: [],
-      seasons: []
+      seasons: [],
+      play: 'false'
     };
   }
 
@@ -61,6 +63,12 @@ class ResultsBar extends Component {
     return filteredResults
   }
 
+  initAnimation = () => {
+    this.setState({ 
+      play: 'true'
+    })
+  }
+
   render() {
 
   	const{races, seasons, results} = this.state
@@ -73,7 +81,8 @@ class ResultsBar extends Component {
 		        raceData={this.filterAndSort(selectedSeason, results)} 
             racesList={races}
             width="1550" 
-            height="600" />
+            height="600"
+            play={this.state.play} />
   	} else {
   	 	var ResultsChart = <Loading width="1550" height="600"/>
   	}
@@ -94,6 +103,7 @@ class ResultsBar extends Component {
   	        list={seasons}
   	        resetThenSet={this.resetThenSet}
   	      />
+          <Button onClick={this.initAnimation}>Play</Button>
           {Title}
   	    </div>
   	    <div>
