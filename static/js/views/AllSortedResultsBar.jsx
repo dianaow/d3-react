@@ -3,7 +3,7 @@ import { max, min, quantile } from 'd3-array';
 import axios from 'axios'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
-import BarChart from '../Main-components/Results-SortedBarChart'
+import BarChart from '../Main-components/Results-SortedBarChartNEW'
 import Header from '../Shared-components/Header'
 import * as Const from '../Shared-components/Constants';
 import { Button } from 'react-bootstrap'
@@ -106,7 +106,7 @@ class ResultsBar extends Component {
           <Button onClick={this.initAnimation}>Play</Button>
           {Title}
   	    </div>
-  	    <div>
+  	    <div id='stackedBarChart'>
   	    	{ResultsChart}
   	    </div>
   	  </div>

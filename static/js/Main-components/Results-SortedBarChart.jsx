@@ -9,8 +9,23 @@ import * as d3Collection from 'd3-collection';
 import * as d3 from 'd3-shape';
 import Loading from '../Shared-components/Loading';
 import Axis from '../Shared-components/Axis'
-import BarsOneRace from './Results-BarAnimation'
 import * as Const from '../Shared-components/Constants';
+import NodeGroup from "react-move/NodeGroup";
+
+  function Bar(props) {
+    return (
+        <rect
+          className='driverOneRace'
+          key={ props.data.key }
+          x={ props.data.x }
+          y={ props.data.y }
+          fill={ props.data.fill }
+          width={ props.data.width }
+          height={ props.data.height }
+          style={{'mix-blend-mode': 'multiply'}}
+        />
+      )
+  }
 
 class BarChart extends Component {
 
@@ -42,11 +57,14 @@ class BarChart extends Component {
 
   componentDidMount() {
     this.restructureData(this.props.raceData)
+    this.initIteration()
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props !== prevProps) {
+      this.state.counter = 0
       this.restructureData(this.props.raceData)
+      this.initIteration()
     }
   }
 
@@ -62,8 +80,12 @@ class BarChart extends Component {
   }
 
   showRaceOnebyOne = () => {
-    let tmp = this.state.stackedData.filter(d => d.index == this.state.counter)
-    this.setState({dataOneRace:tmp, counter: this.state.counter+1})
+    let tmp = this.state.stackedData.filter(d => d.index <= this.state.counter)
+    let flattened = tmp.reduce(function(a, b) {
+        return a.concat(b);
+    }, []);
+    console.log(flattened)
+    this.setState({dataOneRace: flattened, counter: this.state.counter+1})
   }
 
   restructureData = (data) => {
@@ -103,6 +125,29 @@ class BarChart extends Component {
       driverRef: permute(driverList, order)
     })
 
+    this.xScale = this.xScale
+                    .domain(stackedData.driverRef)
+
+    this.yScale = this.yScale
+                    .domain([0, max(stackedData.totals)])
+
+    const xbandSize = this.xScale.bandwidth()
+
+    this.color = scaleOrdinal()
+                    .domain(stackedData.keys)
+                    .range(schemeSpectral[11])
+
+    stackedData.forEach((d,i) =>
+      stackedData.driverRef.forEach((D,I) => {
+        stackedData[i][I].key = stackedData.ids[i][I]
+        stackedData[i][I].x = this.xScale(D)
+        stackedData[i][I].y = ( d[I][1] ? this.yScale(d[I][1]) : this.yScale(0) ) 
+        stackedData[i][I].fill = this.color(stackedData.keys[i]) 
+        stackedData[i][I].width = this.xScale.bandwidth()
+        stackedData[i][I].height = ( d[I][0] ? this.yScale(d[I][0]) : this.yScale(0) ) - ( d[I][1] ? this.yScale(d[I][1]) : this.yScale(0) )
+      })
+    )
+
     this.setState({stackedData})
   }
 
@@ -114,32 +159,21 @@ class BarChart extends Component {
     }
   }
 
-  updateD3(state) {
+  updateD3() {
 
-    const {stackedData, dataOneRace, counter} = state
-
-    const xScale = this.xScale
-                    .domain(stackedData.driverRef)
-
-    const yScale = this.yScale
-                    .domain([0, max(stackedData.totals)])
-
-    const xbandSize = xScale.bandwidth()
-
-    const color = scaleOrdinal()
-                    .domain(stackedData.keys)
-                    .range(schemeSpectral[11])
+    const {stackedData, dataOneRace} = this.state
+    //console.log(stackedData, dataOneRace)
 
     const xProps = {
       orient: 'Bottom',
-      scale: xScale,
+      scale: this.xScale,
       translate: `translate(0, ${this.svgDimensions.height})`,
       tickSize: -10
     }
 
     const yProps = {
       orient: 'Left',
-      scale: yScale,
+      scale: this.yScale,
       translate: `translate(${this.margins.left}, 0)`,
       tickSize: -10,
       tickValues: range(0, max(stackedData.totals), 5)
@@ -150,7 +184,7 @@ class BarChart extends Component {
       stackedData.keys.map((d,i) =>
         <g transform={"translate(" + 0 + "," + (i*20) + ")"}> 
           <rect
-            fill={color(stackedData.keys[i])}
+            fill={this.color(stackedData.keys[i])}
             x={0}
             width={20}
             height={20}
@@ -167,48 +201,26 @@ class BarChart extends Component {
       )
     )
 
-    const bars = (
-      stackedData.map((d,i) =>
-        stackedData.driverRef.map((D,I) => 
-          <rect
-            ref='barsAllRaces'
-            key={ stackedData.ids[i][I] }
-            x={ xScale(D) }
-            y={ ( d[I][1] ? yScale(d[I][1]) : yScale(0) ) }
-            fill={ color(stackedData.keys[i]) }
-            width={ xScale.bandwidth() }
-            height={ ( d[I][0] ? yScale(d[I][0]) : yScale(0) ) - ( d[I][1] ? yScale(d[I][1]) : yScale(0) ) }
-          />
-        )
-      )
-    )
-
-    if (this.props.play == 'true') {
-      selectAll(this.refs.barsAllRaces).remove()
-      this.initIteration()
-      console.log(dataOneRace)
-        dataOneRace.map((D,I) => 
-          D.map((d,i) => 
-            <BarsOneRace
-              ref={counter-1}
-              key={ stackedData.ids[counter-1][i] }
-              x={ xScale(stackedData.driverRef[i]) }
-              y={ ( d[1] ? yScale(d[1]) : yScale(0) ) }
-              fill={ color(stackedData.keys[counter-1]) }
-              width={ xScale.bandwidth() }
-              height={ ( d[0] ? yScale(d[0]) : yScale(0) ) - ( d[1] ? yScale(d[1]) : yScale(0) ) }
-            />
-          )
-        )
-
-    }
-
-    const Bar = (
-      <svg width={this.wrapper.width} height={this.wrapper.height}>
+    const BarGroup = (
+      <svg width={this.wrapper.width} height={this.wrapper.height} className='stackedWrapper'>
         <g transform={"translate(" + (this.axisSpace.width + this.margins.left) + "," + (this.margins.top) + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
-          {bars}
+            <NodeGroup
+              data={dataOneRace}
+              keyAccessor={d => d.key}
+              start={this.startTransition}
+              enter={this.enterTransition}
+              update={this.updateTransition}
+            >
+              {nodes => (
+                <g>
+                  {nodes.map(({ key, data, state }) => (
+                    <Bar key={key} data={data} state={state} />
+                  ))}
+                </g>
+              )}
+            </NodeGroup>
           <text 
             style={Const.textStyle}
             transform={"translate(" + (- this.margins.left) + "," + (this.svgDimensions.height/2 + this.margins.top + this.axisSpace.height) + ")rotate(-90)"}>
@@ -226,14 +238,48 @@ class BarChart extends Component {
       </svg>
     )
     
-    return Bar
- }
+    return BarGroup
+  }
+
+  autoSortD3() {
+
+    const BarGroup = this.updateD3()
+
+    const {dataOneRace} = this.state
+
+    const svg = select('.stackedWrapper')
+    const bar = selectAll('driverOneRace')
+    const gx = select('.Axis-bottom')
+
+    const t = svg.transition()
+      .duration(750);
+
+    bar.data(dataOneRace, d => d[1])
+        .order()
+      .transition(t)
+        .delay((d, i) => i * 20)
+        .attr("x", d => d.x);
+
+  }
+
+  startTransition(d, i) {
+    return { value: d[1], y: d.y, opacity: 0 };
+  }
+
+  enterTransition(d) {
+    return { value: d[1], opacity: [1], timing: { duration: 250 } };
+  }
+
+  updateTransition(d, i) {
+    return { value: d[1], y: d[1], opacity: [1], timing: { duration: 300 } };
+  }
 
   render() {
 
-    if (this.state.stackedData.length != 0) {
-      const Bar = this.updateD3(this.state)
-      return(Bar)
+    if ((this.state.stackedData.length != 0) & (this.state.dataOneRace.length != 0)) {
+      this.autoSortD3()
+      //const BarGroup = this.updateD3()
+      //return(BarGroup)
     } else {
       return(<Loading width="1550" height="600"/>)
     }
