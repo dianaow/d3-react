@@ -4,6 +4,7 @@ import { min, max, range } from 'd3-array';
 import Axis from '../Shared-components/Axis'
 import Bars from '../Shared-components/Bars'
 import Legend from './Results-Legend'
+import * as Const from '../Shared-components/Constants';
 
 class BarChart extends Component {
 
@@ -18,7 +19,7 @@ class BarChart extends Component {
     
     const data = this.props.qualData
     const raceData = this.props.raceData
-    const wrapper = { width: this.props.width, height: this.props.height }
+    const wrapper = { width: Const.width, height: Const.height }
     const legendRight = { width: 200, height: 400 }
     const legendBottom = { width: 1200, height: 50 }
     const axisSpace = { width: 30, height: 30 }

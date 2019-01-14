@@ -1,5 +1,8 @@
 import { scaleOrdinal } from 'd3-scale';
 
+export const width = 1500
+export const height = 650
+
 export const teamColors =   [{id:1, key: "ferrari", value: "#DC0000"},
 		                     {id:2, key: "mercedes", value: "#01d2be"},
 		                     {id:3, key: "red_bull", value: "#223971"},

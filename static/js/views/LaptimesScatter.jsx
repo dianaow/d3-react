@@ -26,7 +26,7 @@ class LaptimesScatter extends Component {
       zoomType: null
     }
 
-    this.wrapper = { width: 1400, height: 650 }
+    this.wrapper = { width: Const.width, height: Const.height }
     this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
     this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.margins.top - this.margins.bottom}
@@ -146,7 +146,7 @@ class LaptimesScatter extends Component {
           <h4>LAP NUMBER</h4>
         </div>
   	 } else {
-  	 	var LapsChart = <Loading width={this.width} height={this.height}/>
+  	 	var LapsChart = <Loading/>
       var Others = <div></div>
   	}
 

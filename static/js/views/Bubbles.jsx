@@ -28,7 +28,7 @@ class Bubbles extends Component {
   constructor(){
     super()
 
-    var mainFullWidth = 1600,
+    var mainFullWidth = Const.width,
         mainFullHeight = 1500
 
     this.margin = {top: 0, right: 0, bottom: 0, left:0}
@@ -104,7 +104,7 @@ class Bubbles extends Component {
       d.maxLaps = tmp[0].value
     })
     //console.log(graph.data)
-
+       
     this.setState({graph})
 
   }
@@ -114,6 +114,8 @@ class Bubbles extends Component {
     //console.log(graph.data)
     //console.log(graph.links)
     var svg = select(".canvas")
+
+    svg.selectAll("*").remove()
 
     // Draw links
     var link = svg.append("g")
@@ -176,12 +178,11 @@ class Bubbles extends Component {
     // Only select nodes of raceNames to have description text
     node.append("text")
         .filter(d => d.id > 200)
-        .attr('x', 0)
-        .attr('y', 400-2*radius(300/1)-10)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "middle")
-        .style('fill', 'white')
-        .text(d => d.label)
+          .attr('dy', -30)
+          .attr("text-anchor", "middle")
+          .style('fill', 'white')
+          .text(d => d.season)
+
 
     function ticked() {
 
@@ -217,7 +218,7 @@ class Bubbles extends Component {
   renderLegend = () => {
 
     var svg = select(".canvas")
-    var legendMargin = { top: radius(300/1), right: radius(300/1) * 1.5} // place legend within canvas
+    var legendMargin = { top: radius(300/1)*1.5, right: radius(300/1) * 1.5} // place legend within canvas
 
     // Draw a circle
     var timings = range(85,106,1)
@@ -357,6 +358,7 @@ class Bubbles extends Component {
 
   }
 
+
   render() {
 
   	const {graph} = this.state
@@ -364,12 +366,12 @@ class Bubbles extends Component {
     if (graph.length != 0) {
       this.renderForceLayout(graph) 
       this.renderLegend()
-    }
-
+    } 
     return (
       <div className="header">
         <Header/>
         <svg className='canvas' width={this.width} height={this.height} transform={"translate(" + this.margin.left + "," + this.margin.top + ")"}>
+          <text dx="700" dy="300" font-size='3em' class="heavy">Loading...</text>
         </svg>
       </div>
   	)

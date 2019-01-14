@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "997849770688.dkr.ecr.ap-southeast-1.amazonaws.com/d3-react-frontend-copy_client:v2"
+    "Name": "997849770688.dkr.ecr.ap-southeast-1.amazonaws.com/d3-react-frontend-copy_client:v3"
   },
   "MemoryReservation": 512
 }

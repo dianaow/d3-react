@@ -12,7 +12,7 @@ class BeeswarmPlot extends Component {
   constructor(props) {
     super(props)
 
-    this.wrapper = { width: props.width, height: props.height }
+    this.wrapper = { width: Const.width, height: Const.height }
     this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
     this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.margins.top - this.margins.bottom}
@@ -25,15 +25,6 @@ class BeeswarmPlot extends Component {
     this.yScale = scaleBand()
                     .rangeRound([this.svgDimensions.height, this.margins.top])
 
-  }
-
-
-  formatDriverNames = (e) => {
-    if(e.includes("_")){
-      return e.split("_")[1]
-    } else {
-      return e
-    }
   }
 
   getKeyValues = (arr) => {
@@ -75,7 +66,7 @@ class BeeswarmPlot extends Component {
 
     // Nest the data by driver name
     var drivers = d3Collection.nest()
-                  .key(d => this.formatDriverNames(d.driverRef))
+                  .key(d => Const.formatDriverNames(d.driverRef))
                   .entries(data)
 
     var nodes = [];
@@ -140,8 +131,8 @@ class BeeswarmPlot extends Component {
     }
 
     const chart = {
-      width: this.props.width-this.margins.left-10,
-      height: this.props.height,
+      width: Const.width-this.margins.left-10,
+      height: Const.height,
       overflowX: 'scroll',
       float:'left'
     }
@@ -151,8 +142,8 @@ class BeeswarmPlot extends Component {
     }
 
     const wrap = {
-      minWidth: this.props.width,
-      height: this.props.height,
+      minWidth: Const.width,
+      height: Const.height,
     }
 
     if (nodes.nodes.length != 0) {
@@ -162,7 +153,7 @@ class BeeswarmPlot extends Component {
             svgDimensions={this.svgDimensions}
           />
      } else {
-      var forces = <Loading width="1200" height="850"/>
+      var forces = <Loading/>
     }
 
     return (

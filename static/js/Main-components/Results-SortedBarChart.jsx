@@ -32,7 +32,7 @@ class BarChart extends Component {
   constructor(props) {
     super(props)
 
-    this.wrapper = { width: this.props.width, height: this.props.height }
+    this.wrapper = { width: Const.width, height: Const.height }
     this.legendRight = { width: 100, height: 400 }
     this.axisSpace = { width: 30, height: 30 }
     this.margins = { top: 20, right: 20, bottom: 20, left: 30 }
@@ -91,7 +91,7 @@ class BarChart extends Component {
   restructureData = (data) => {
 
     var data1 =  d3Collection.nest()
-                    .key(d => this.formatDriverNames(d.driverRef))
+                    .key(d => Const.formatDriverNames(d.driverRef))
                     .entries(data)
     var driverList = data1.map(d => d.key)
 
@@ -149,14 +149,6 @@ class BarChart extends Component {
     )
 
     this.setState({stackedData})
-  }
-
-  formatDriverNames = (e) => {
-    if(e.includes("_")){
-      return e.split("_")[1]
-    } else {
-      return e
-    }
   }
 
   updateD3() {
@@ -277,9 +269,9 @@ class BarChart extends Component {
   render() {
 
     if ((this.state.stackedData.length != 0) & (this.state.dataOneRace.length != 0)) {
-      this.autoSortD3()
-      //const BarGroup = this.updateD3()
-      //return(BarGroup)
+      //this.autoSortD3()
+      const BarGroup = this.updateD3()
+      return(BarGroup)
     } else {
       return(<Loading width="1550" height="600"/>)
     }

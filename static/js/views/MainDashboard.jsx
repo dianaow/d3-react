@@ -83,11 +83,9 @@ class MainDashboard extends Component {
     if (races.length != 0 && seasons.length != 0 && round_laptimes.length != 0) {
     var distPlot = 
       <BeeswarmPlot
-        lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
-        width="1400" 
-        height="690"/> 
+        lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)}/> 
     } else {
-      var distPlot = <Loading width="1400" height="690"/>
+      var distPlot = <Loading/>
     }
 
     if (races.length != 0 && seasons.length != 0)  {

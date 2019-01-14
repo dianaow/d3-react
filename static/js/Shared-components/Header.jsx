@@ -7,21 +7,24 @@ const Header = () => (
 	<div className='dd-header'>
 		<h1>FORMULA 1</h1>
 	    <ButtonToolbar>
-	    	<ToggleButtonGroup type="radio" name="options" defaultValue={2}>
+	    	<ToggleButtonGroup type="radio" name="options" defaultValue={6}>
 	    		<LinkContainer to="/about">
 					<ToggleButton value={1}>About</ToggleButton>
 				</LinkContainer>
 		    	<LinkContainer to="/laptimes-beeswarmplot">
-					<ToggleButton value={2}>Laptimes v1</ToggleButton>
+					<ToggleButton value={2}>Beeswarmplot: Laptimes</ToggleButton>
 				</LinkContainer>
 				<LinkContainer to="/laptimes-scatterplot">
-				    <ToggleButton value={3}>Laptimes v2</ToggleButton>
+				    <ToggleButton value={3}>Scatterplot: Laptimes</ToggleButton>
 				</LinkContainer>
 				<LinkContainer to="/results-barchart">
-				    <ToggleButton value={4}>Results v1</ToggleButton>
+				    <ToggleButton value={4}>Bar Chart: Race vs Qual Results</ToggleButton>
 				</LinkContainer>
 				<LinkContainer to="/animation">
-				    <ToggleButton value={5}>Results v2</ToggleButton>
+				    <ToggleButton value={5}>Animation: Yearly Results</ToggleButton>
+				</LinkContainer>
+			    <LinkContainer to="/bubbles">
+				    <ToggleButton value={6}>Force Layout: Race Results</ToggleButton>
 				</LinkContainer>
 		    </ToggleButtonGroup>
 	    </ButtonToolbar>

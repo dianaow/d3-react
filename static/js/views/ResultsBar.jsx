@@ -94,11 +94,9 @@ class ResultsBar extends Component {
 	    var ResultsChart = 
 	      <BarChart 
 		        qualData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, true)} 
-		        raceData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, false)} 
-            width="1200" 
-            height="500" />
+		        raceData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, false)} />
   	} else {
-  	 	var ResultsChart = <Loading width="1200" height="450"/>
+  	 	var ResultsChart = <Loading/>
   	}
 
     if (races.length != 0 && seasons.length != 0)  {

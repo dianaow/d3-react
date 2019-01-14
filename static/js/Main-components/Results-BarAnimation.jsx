@@ -6,7 +6,7 @@ import { easeCubicInOut } from 'd3-ease'
 class BarsOneRace extends Component {
 
     componentDidMount() {
-        console.log(this.props.x)
+        //console.log(this.props.x)
         this.addBars()
     }
 
@@ -17,7 +17,7 @@ class BarsOneRace extends Component {
     }
 
     addBars = () => {
-        console.log(this.props.ref)
+        //console.log(this.props.ref)
         d3.select(this.props.ref)
           .transition()
           .duration(1000)
