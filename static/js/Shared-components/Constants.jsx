@@ -120,5 +120,11 @@ export const headerStyle = {
   minWidth: '350px'
 }
 
-
+export const formatDriverNames = (e) => {
+  if(e.includes("_")){
+    return e.split("_")[1]
+  } else {
+    return e
+  }
+}
 

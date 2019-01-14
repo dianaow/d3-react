@@ -4,6 +4,7 @@ import MainDashboard from './views/MainDashboard'
 import LaptimesScatter from './views/LaptimesScatter'
 import ResultsBar from './views/ResultsBar'
 import AllSortedResultsBar from './views/AllSortedResultsBar'
+import Bubbles from './views/Bubbles'
 import About from './views/About'
 
 const Main = () => (
@@ -15,6 +16,7 @@ const Main = () => (
       <Route path='/laptimes-scatterplot' component={LaptimesScatter}/>
       <Route path='/results-barchart' component={ResultsBar}/>
       <Route path='/animation' component={AllSortedResultsBar}/>
+      <Route path='/bubbles' component={Bubbles}/>
     </Switch>
   </main>
 )
