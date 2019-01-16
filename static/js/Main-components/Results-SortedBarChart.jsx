@@ -22,7 +22,7 @@ import NodeGroup from "react-move/NodeGroup";
           fill={ props.data.fill }
           width={ props.data.width }
           height={ props.data.height }
-          style={{'mix-blend-mode': 'multiply'}}
+          //style={{'mix-blend-mode': 'multiply'}}
         />
       )
   }
@@ -36,16 +36,14 @@ class BarChart extends Component {
     this.legendRight = { width: 100, height: 400 }
     this.axisSpace = { width: 30, height: 30 }
     this.margins = { top: 20, right: 20, bottom: 20, left: 30 }
-    this.svgDimensions = { width: this.wrapper.width - this.legendRight.width - this.axisSpace.width - this.margins.left - this.margins.right, height: this.wrapper.height - this.axisSpace.height - this.margins.top - this.margins.bottom }
+    this.svgDimensions = { width: this.wrapper.width - this.axisSpace.width - this.margins.left - this.margins.right, height: this.wrapper.height - this.axisSpace.height - this.margins.top - this.margins.bottom }
 
     this.xScale = scaleBand()
-                    .padding(0.1)
+                    .padding(0.2)
                     .range([this.margins.left, this.svgDimensions.width])
 
     this.yScale = scaleLinear()
                     .range([this.svgDimensions.height, this.margins.top])
-
-    this.racesList = this.props.racesList
 
     this.state = {
       dataOneRace: [],
@@ -70,7 +68,7 @@ class BarChart extends Component {
 
   initIteration = () => {
      var Timer = interval(t => {
-      if (this.state.counter == 3) {
+      if (this.state.counter == this.props.racesList.length) {
         Timer.stop()
       } else {
         this.showRaceOnebyOne()
@@ -84,7 +82,7 @@ class BarChart extends Component {
     let flattened = tmp.reduce(function(a, b) {
         return a.concat(b);
     }, []);
-    console.log(flattened)
+    //console.log(flattened)
     this.setState({dataOneRace: flattened, counter: this.state.counter+1})
   }
 
@@ -93,9 +91,12 @@ class BarChart extends Component {
     var data1 =  d3Collection.nest()
                     .key(d => Const.formatDriverNames(d.driverRef))
                     .entries(data)
+
+    console.log(data1.filter(d => (d.key=='raikkonen')))
+
     var driverList = data1.map(d => d.key)
 
-    var mapped = this.racesList.map(R => driverList.map(P => `${R}_${P}`))
+    //var mapped = this.props.racesList.map(R => driverList.map(P => `${R}_${P}`))
 
     // Compute the total points achieved by driver in season by summing points across races.
     var totalPoints = []
@@ -114,12 +115,13 @@ class BarChart extends Component {
       d.values.map(p => oneDriverRace.push(p.points))
       dataNew.push(oneDriverRace)
     })
+    console.log(dataNew)
 
     // Compute the desired order of drivers by descending total points.
     var order = range(data1.length - 1).sort((i, j) => totalPoints[j] - totalPoints[i]);
 
-    var stackedData = Object.assign(d3.stack().keys(range(this.racesList.length))(permute(dataNew, order)), {
-      keys: this.racesList,
+    var stackedData = Object.assign(d3.stack().keys(range(this.props.racesList.length))(permute(dataNew, order)), {
+      keys: this.props.racesList,
       ids: mapped,
       totals: permute(totalPoints, order),
       driverRef: permute(driverList, order)
@@ -147,6 +149,7 @@ class BarChart extends Component {
         stackedData[i][I].height = ( d[I][0] ? this.yScale(d[I][0]) : this.yScale(0) ) - ( d[I][1] ? this.yScale(d[I][1]) : this.yScale(0) )
       })
     )
+    console.log(stackedData)
 
     this.setState({stackedData})
   }
@@ -168,7 +171,7 @@ class BarChart extends Component {
       scale: this.yScale,
       translate: `translate(${this.margins.left}, 0)`,
       tickSize: -10,
-      tickValues: range(0, max(stackedData.totals), 5)
+      tickValues: range(0, max(stackedData.totals)+1, 5)
       //tickValues: ticks(0, max(stackedData.totals), 10)
     }
 
@@ -224,7 +227,7 @@ class BarChart extends Component {
             Driver
           </text>
         </g>
-        <g transform={"translate(" + (this.svgDimensions.width) + "," + (this.margins.top) + ")"}>
+        <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width) + "," + (this.margins.top) + ")"}>
           {legendColorBar}
         </g>
       </svg>

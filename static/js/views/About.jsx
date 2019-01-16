@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Header from '../Shared-components/Header'
 
 class About extends Component {
 
@@ -11,8 +12,9 @@ class About extends Component {
 		}
 
 	  return (
-	    <React.Fragment>
-	  	  <div className="dd-wrapper">
+	    <div className="header">
+          <Header/>
+	  	  <div className="wrapper">
 			  <div className="About">
 			  	<p> Frontend Stack </p>
 			  	<i className="devicon-javascript-plain colored"></i>
@@ -33,7 +35,7 @@ class About extends Component {
 			  	<i className="devicon-amazonwebservices-plain-wordmark colored"></i>
 			  </div>
 		  </div>
-		</React.Fragment>
+		</div>
 	  )
   }
 }

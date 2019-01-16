@@ -7,7 +7,7 @@ export default class Loading extends Component {
 
     return (
     	<svg width={Const.width} height={Const.height}>
-            <text dx="650" dy="300" font-size='3em' class="heavy">Loading...</text>
+            <text dx="650" dy="300" fontSize='3em' className="heavy">Loading...</text>
     	</svg>
     )
   }
