@@ -48,7 +48,7 @@ class BeeswarmPlot extends Component {
     var data = lapsData.slice()
 
     // Get an array of all the sorted 'values' columns (or 1 sec intervals) 
-    var value_fields = range(80.0, 110.0, 1)
+    var value_fields = range(85.0, 111.0, 1)
     value_fields = value_fields.sort((a, b) => { return a-b })
     value_fields = value_fields.map(d => d.toFixed(1))
     var value_fields_str = value_fields.map(d => d.toString())
@@ -57,7 +57,7 @@ class BeeswarmPlot extends Component {
     yScale.domain(lapsData.map(d => d.constructorRef))
 
     // Add back the string labels
-    var newItems = ['constructorRef', 'driverRef', 'season', 'raceName']; 
+    var newItems = ['constructorRef','driverRef', 'season', 'raceName']; 
     let arr = value_fields.slice()
     arr.push(...newItems); 
 
@@ -89,8 +89,8 @@ class BeeswarmPlot extends Component {
           var new_nodes = range(d).map( x => {
               return {
                   id: driver.key + i.toString() + '_' + x.toString(),
-                  radius: 3,
                   color: Const.colorScale(driver.values[0].constructorRef),
+                  stroke: Const.toaddStroke(driver.key, driver.values[0].season) ? 'black': 'white',
                   cx: xScale(value_fields_str[i]),
                   cy: yScale(driver.values[0].constructorRef),
                   season: driver.values[0].season,
@@ -103,13 +103,13 @@ class BeeswarmPlot extends Component {
     
     drivers[driver_i].cnt = cnt_so_far;
     })
-
+    //console.log(nodes)
+    
     return {nodes:nodes, xscale:xScale, yscale:yScale}
   }
 
 
   render() {
-        
     const nodes = this.createNodes(this.props.lapsData, this.xScale, this.yScale)
 
     const xbandSize = nodes.xscale.bandwidth()
@@ -176,7 +176,7 @@ class BeeswarmPlot extends Component {
               <text
                 style={Const.topLegendStyle}
                 transform={"translate(" + (this.margins.left) + "," + 10 + ")"}>
-                  Laps where driver made a pitstop are not included. Only laptimes completed within 85 to 105 seconds are included.
+                  Laps where driver made a pitstop are not included. Only laptimes completed within 85 to 110 seconds are included.
               </text>
             </g>
             <Axis {...xProps} />

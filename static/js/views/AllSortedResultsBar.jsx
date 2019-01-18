@@ -23,10 +23,11 @@ class ResultsBar extends Component {
   }
 
   componentDidMount(){
-
+    console.log(RESULTS_SERVICE_URL)
   	const resultsRequest = axios.get(RESULTS_SERVICE_URL)
   								.then(response => {this.setState({results: response.data.data})})
-
+                  .catch(error => {console.log(error)})
+  
   	const racesRequest = axios.get(RACES_SERVICE_URL)
 							  .then(response =>
 							    response.data.data.map(race => ({

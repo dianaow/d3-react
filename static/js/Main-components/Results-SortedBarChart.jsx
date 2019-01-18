@@ -92,11 +92,10 @@ class BarChart extends Component {
                     .key(d => Const.formatDriverNames(d.driverRef))
                     .entries(data)
 
-    console.log(data1.filter(d => (d.key=='raikkonen')))
-
     var driverList = data1.map(d => d.key)
-
-    //var mapped = this.props.racesList.map(R => driverList.map(P => `${R}_${P}`))
+    var races_order = range(this.props.racesList.length - 1).sort((i, j) => i - j)
+    
+    var mapped = this.props.racesList.map(R => driverList.map(P => `${R}_${P}`))
 
     // Compute the total points achieved by driver in season by summing points across races.
     var totalPoints = []
@@ -106,16 +105,33 @@ class BarChart extends Component {
         }, 0);
       totalPoints.push(sum)
     })
-
+  
+    function sortOn(property){
+        return function(a, b){
+            console.log(a[property])
+            if(a[property] < b[property]){
+                return -1;
+            }else if(a[property] > b[property]){
+                return 1;
+            }else{
+                return 0;   
+            }
+        }
+    }
+    
+    data1 = data1.map(d => d.values.sort(sortOn("roundId")))
+    //console.log(data1)
+    
     // Construct an array of arrays where dataNew[i][j] is the point achived for driverRef i and raceName j.
     var dataNew = []
     var eachPoints = []
     data1.forEach((d,i) => {
+      
       var oneDriverRace = []
-      d.values.map(p => oneDriverRace.push(p.points))
+      d.map(p => oneDriverRace.push(p.points))
       dataNew.push(oneDriverRace)
     })
-    console.log(dataNew)
+    //console.log(dataNew)
 
     // Compute the desired order of drivers by descending total points.
     var order = range(data1.length - 1).sort((i, j) => totalPoints[j] - totalPoints[i]);

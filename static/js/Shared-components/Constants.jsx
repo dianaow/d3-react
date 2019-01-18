@@ -1,7 +1,12 @@
 import { scaleOrdinal } from 'd3-scale';
 
-export const width = 1500
-export const height = 650
+export const width = 1400
+export const height = 600
+
+export const wrapper = { width: 1400, height: 600 }
+export const margins = { top: 60, right: 0, bottom: 0, left: 80 }
+export const svgDimensions = { width: wrapper.width - margins.left - margins.right, 
+                    		   height: wrapper.height - margins.top - margins.bottom}
 
 export const teamColors =   [{id:1, key: "ferrari", value: "#DC0000"},
 		                     {id:2, key: "mercedes", value: "#01d2be"},
@@ -91,6 +96,7 @@ export const driver_2017_2 = ["raikkonen", "bottas", "kvyat", "verstappen", "oco
 export const driver_2018_1 = ["vettel", "hamilton", "ricciardo", "perez", "grosjean", "alonso", "ericsson", "stroll", "sainz", "gasly"]
 export const driver_2018_2 = ["raikkonen", "bottas", "verstappen", "verstappen", "ocon", "magnussen", "vandoorne", "leclerc", "sirotkin", "hulkenberg"]
 
+// SCALES
 export const driverColorScale = scaleOrdinal()
 				                    .domain(driverColors.map(d => d.id))
 				                    .range(driverColors.map(d => d.value))
@@ -99,6 +105,7 @@ export const colorScale = scaleOrdinal()
 							.domain(teamColors.map(d => d.key))
                         	.range(teamColors.map(d => d.value))
 
+// STYLES
 export const textStyle = {
   textAlign: 'center',
   fontWeight: 'bold',
@@ -123,11 +130,34 @@ export const headerStyle = {
   minWidth: '350px'
 }
 
+// FUNCTIONS
 export const formatDriverNames = (e) => {
   if(e.includes("_")){
     return e.split("_")[1]
   } else {
     return e
+  }
+}
+
+export const toaddStroke = (d, s) => {
+  if (s == 2016) {
+    if (driver_2016_1.includes(d)) {
+      return true
+    } else if (driver_2016_2.includes(d)) {
+      return false
+    }
+  } else if (s == 2017) {
+    if (driver_2017_1.includes(d)) {
+      return true
+    } else if (driver_2017_2.includes(d)) {
+      return false
+    }      
+  } else if (s == 2018) {
+    if (driver_2018_1.includes(d)) {
+      return true
+    } else if (driver_2018_2.includes(d)) {
+      return false
+    }      
   }
 }
 

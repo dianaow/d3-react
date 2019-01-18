@@ -4,15 +4,17 @@ import * as d3Zoom from 'd3-zoom'
 import { select, event } from 'd3-selection';
 //import {event as currentEvent, select as currentSelect} from 'd3-selection';
 import axios from 'axios'
+import ScatterPlot from '../Main-components/Laptimes-ScatterPlot'
+import Legend from '../Main-components/Laptimes-Legend'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
-import ScatterPlot from '../Main-components/Laptimes-ScatterPlot'
 import Header from '../Shared-components/Header'
 import * as Const from '../Shared-components/Constants';
 import { Button } from 'react-bootstrap'
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const LAPTIMES_SERVICE_URL = `${process.env.LAPTIMES_SERVICE_URL}`
+const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 
 class LaptimesScatter extends Component {
 
@@ -22,6 +24,7 @@ class LaptimesScatter extends Component {
       races: [],
       seasons: [],
       laptimes: [],
+      results: [],
       zoomTransform: null,
       zoomType: null
     }
@@ -51,10 +54,17 @@ class LaptimesScatter extends Component {
                       id: race.id-1}))
                   )
               .then(races => this.setDefault(races))
+              .catch(error => {console.log(error)})
 
     const laptimesRequest = axios.get(LAPTIMES_SERVICE_URL)
                  .then(response => {this.setState({laptimes: response.data.data})})
-
+                 .catch(error => {console.log(error)})
+  
+    //purpose of reading in results data is to merge the contructorRef to driverRef. Laptimes data does not contain constructorRef info, while results/qual data contains drivers' constructorRef
+    const resultsRequest = axios.get(RESULTS_SERVICE_URL)
+                 .then(response => {this.setState({results: response.data.data})})
+                 .catch(error => {console.log(error)})
+                 
     select(this.refs.svg)
       .call(this.zoom)
 
@@ -109,31 +119,19 @@ class LaptimesScatter extends Component {
     this.setState({key: data});
   }
 
-  filterAndSort_Laps = (selectedRace, selectedSeason, laptimes, filtQ) => {
-	  var filteredLapsResults = laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
-    if (filtQ) {
-      return this.filterQuantile(filteredLapsResults)
-    } else {
-      return filteredLapsResults
-    }
-  }
-
-  filterQuantile = (data) => {
-    var upperIQR = quantile(data.map(d => d.time), 0.995)
-    return data.filter(d => (d.time < upperIQR))
-  }
-
   render() {
 
-  	const{races, seasons, laptimes, zoomTransform, zoomType} = this.state
+  	const{races, seasons, laptimes, results, zoomTransform, zoomType} = this.state
 
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
 
-  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0) {
+  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0 && results.length !=0) {
+  	  console.log(laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season)))
 	    var LapsChart = 
 	      <ScatterPlot 
-  		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
+  		    lapsData={laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}
+  		    resultsData={results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}
           width={this.wrapper.width} 
           height={this.wrapper.height}
           zoomTransform={zoomTransform}
@@ -145,6 +143,7 @@ class LaptimesScatter extends Component {
           <span style={Const.topLegendStyle}>Hover over the dots and scroll mouse wheel to zoom in and out</span>
           <h4>LAP NUMBER</h4>
         </div>
+      var legend = <Legend data={results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}/>
   	 } else {
   	 	var LapsChart = <Loading/>
       var Others = <div></div>
@@ -178,6 +177,9 @@ class LaptimesScatter extends Component {
     	    <svg width={this.svgDimensions.width} height={this.svgDimensions.height} ref='svg'>
     	    	{LapsChart}
     	    </svg>
+    	    <div>
+    	    {legend}
+    	    </div>
       	</div>
   	);
 

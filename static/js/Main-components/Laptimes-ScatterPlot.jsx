@@ -51,7 +51,7 @@ class ScatterPlot extends Component {
 
   updateD3(props) {
 
-    const { lapsData, zoomTransform, zoomType } = props
+    const { lapsData, resultsData, zoomTransform, zoomType } = props
 
     let transformX = ""
     let transformY = "" 
@@ -66,7 +66,7 @@ class ScatterPlot extends Component {
                     .rangeRound([this.margins.left, this.svgDimensions.width-this.margins.left])
 
     this.yScale = scaleLinear()
-                    .domain([0,110])
+                    .domain([70,140])
                     .rangeRound([this.svgDimensions.height-15, 15])
 
     if (zoomTransform) {
@@ -88,7 +88,7 @@ class ScatterPlot extends Component {
 
   render() {
     
-    const {lapsData} = this.props
+    const {lapsData, resultsData} = this.props
     
     const yScale = this.newScales
     const xScale = this.xScale
@@ -108,19 +108,22 @@ class ScatterPlot extends Component {
       tickSize: this.svgDimensions.width,
       ticks:8
     }
-
+    
+    
     const lapsData_new = lapsData.map(d => {
       return {
           id: d.id,
-          radius: 3, 
-          color: Const.colorScale(d.constructorRef),
+          //color: Const.driverColors.filter(c => (c.driverRef == d.driverRef) && (c.season == d.season))[0].value, Note: using driverColors list may not be accurate, because recent seasons have shown that there may be mid-season driver changes
+          color: Const.colorScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
+          stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white',
           x: xScale(d.lap),
           y: yScale(d.time),
           driverRef: d.driverRef,
           time: d.time
       }
     })
-
+    //console.log(lapsData_new)
+    
     return (
       <React.Fragment>
         <g>
