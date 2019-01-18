@@ -57,7 +57,7 @@ class ScatterPlot extends Component {
     let transformY = "" 
 
     this.wrapper = { width: props.width, height: props.height }
-    this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
+    this.margins = { top: 30, right: 0, bottom: 0, left: 80 }
     this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
@@ -89,7 +89,7 @@ class ScatterPlot extends Component {
   render() {
     
     const {lapsData, resultsData} = this.props
-    
+
     const yScale = this.newScales
     const xScale = this.xScale
 
@@ -115,7 +115,7 @@ class ScatterPlot extends Component {
           id: d.id,
           //color: Const.driverColors.filter(c => (c.driverRef == d.driverRef) && (c.season == d.season))[0].value, Note: using driverColors list may not be accurate, because recent seasons have shown that there may be mid-season driver changes
           color: Const.colorScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
-          stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white',
+          stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'grey',
           x: xScale(d.lap),
           y: yScale(d.time),
           driverRef: d.driverRef,
@@ -126,22 +126,25 @@ class ScatterPlot extends Component {
     
     return (
       <React.Fragment>
-        <g>
-          <Axis {...xProps} />
-          <Axis {...yProps} />
-          <Dots
-            data={lapsData_new}
-            onMouseOverCallback={this.handleMouseOver}
-            onMouseOutCallback={this.handleMouseOut}
-            tooltip={this.state.tooltip}
-          />
-          <Tooltip
-            tooltip={this.state.tooltip}
-          /> 
-        </g>
+        <Axis {...xProps} />
+        <Axis {...yProps} />
+        <Dots
+          data={lapsData_new}
+          onMouseOverCallback={this.handleMouseOver}
+          onMouseOutCallback={this.handleMouseOut}
+          tooltip={this.state.tooltip}
+        />
+        <Tooltip
+          tooltip={this.state.tooltip}
+        /> 
         <text 
           style={Const.textStyle}
-          transform={"translate(" + 20 + "," + (this.svgDimensions.height/2) + ")rotate(-90)"}>
+          transform={"translate(" + (this.svgDimensions.width/2) + "," + 0 + ")"}>
+          LAP NUMER
+        </text>
+        <text 
+          style={Const.textStyle}
+          transform={"translate(" + 0 + "," + (this.svgDimensions.height/2) + ")rotate(-90)"}>
           Time to complete (in sec)
         </text>
     </React.Fragment>

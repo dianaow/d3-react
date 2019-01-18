@@ -12,7 +12,7 @@ class BeeswarmPlot extends Component {
   constructor(props) {
     super(props)
 
-    this.wrapper = { width: Const.width, height: Const.height }
+    this.wrapper = { width: Const.width, height: Const.height}
     this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
     this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.margins.top - this.margins.bottom}
@@ -131,8 +131,8 @@ class BeeswarmPlot extends Component {
     }
 
     const chart = {
-      width: Const.width-this.margins.left-10,
-      height: Const.height,
+      width: this.wrapper.width-this.margins.left-10,
+      height: this.wrapper.height,
       overflowX: 'scroll',
       float:'left'
     }
@@ -142,8 +142,8 @@ class BeeswarmPlot extends Component {
     }
 
     const wrap = {
-      minWidth: Const.width,
-      height: Const.height,
+      minWidth: this.wrapper.width,
+      height: this.wrapper.height,
     }
 
     if (nodes.nodes.length != 0) {

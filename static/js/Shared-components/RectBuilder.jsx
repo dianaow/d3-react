@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 
 var DEFAULT_OPTIONS = {
 	pre: 'default_',
-	radius:8,
+	width:10,
+	height:10,
 	strokeWidth:3,
 	opacity:1
 };  
@@ -15,48 +16,45 @@ function getOptionOrDefault(key, options, defaultOptions) {
     return defaultOptions[key];
 }
 
-export const drawCircle = (data, options) => {
+export const drawRect = (data, options) => {
 	
-	var strokeWidth = getOptionOrDefault('strokeWidth', options);
-    var radius = getOptionOrDefault('radius', options);
+	var width = getOptionOrDefault('width', options);
+    var height = getOptionOrDefault('height', options);
     var opacity = getOptionOrDefault('opacity', options);
     var pre = getOptionOrDefault('pre', options);
     
     return data.map((d,i) =>
-	  <circle
+	  <rect
 	  	className={pre + i}
 	    key={d.id}
-	    cx={d.x}
-	    cy={d.y}
-	    r={radius}
+	    x={d.x}
+	    y={d.y}
+	    width={width}
+	    height={height}
 	    fill={d.color}
-	    stroke={d.stroke}
-	    strokeWidth={strokeWidth}
 	    opacity={opacity}
 	  />
 	)
 }
 
-export const drawCircleInteractive = (data, options, onMouseOverCallback, onMouseOutCallback) => {
+export const drawBar = (data, options) => {
 	
 	var strokeWidth = getOptionOrDefault('strokeWidth', options);
-    var radius = getOptionOrDefault('radius', options);
     var opacity = getOptionOrDefault('opacity', options);
     var pre = getOptionOrDefault('pre', options);
     
     return data.map((d,i) =>
-	  <circle
+	  <rect
 	  	className={pre + i}
 	    key={d.id}
-	    cx={d.x}
-	    cy={d.y}
-	    r={radius}
+	    x={d.x}
+	    y={d.y}
+	    width={d.width}
+	    height={d.height}
 	    fill={d.color}
 	    stroke={d.stroke}
 	    strokeWidth={strokeWidth}
 	    opacity={opacity}
-	    onMouseOver={() => onMouseOverCallback(d)}
-    	onMouseOut={() => onMouseOutCallback(d)}
 	  />
 	)
 }

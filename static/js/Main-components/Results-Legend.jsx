@@ -1,4 +1,7 @@
 import React, { Component, Fragment } from 'react'
+import { drawText } from '../Shared-components/TextBuilder';
+import { drawRect } from '../Shared-components/RectBuilder';
+import * as Const from '../Shared-components/Constants';
 
 export default class Legend extends Component {
 	
@@ -24,12 +27,12 @@ export default class Legend extends Component {
 		return sum
 	}
 
-    sortPoints = (summedPoints, tmp, colormap) => {
+    sortPoints = (summedPoints, tmp) => {
 
     	const uniqTeams = [...new Set(summedPoints.map(d => d.constructorRef))]
 		var filtered = [];
 
-		colormap.map(d => {
+		Const.teamColors.map(d => {
 		   uniqTeams.map(f => {
 		       if(d.key == f){
 		          filtered.push(d);
@@ -42,64 +45,44 @@ export default class Legend extends Component {
     }
 
 	render() {
-    
-    	const colormap = this.props.colormap
-	    const data = this.props.data
-	    const raceData = this.props.raceData
+
+	    const raceData = this.props.data
 
 	    var summedPoints = this.sumPoints(raceData)
 	    summedPoints.sort((a, b) => { return (b.points) - (a.points) })
 	    var tmp = summedPoints.map(d => d.constructorRef)
-	    var filt_colormap = this.sortPoints(summedPoints, tmp, colormap)
-
-	    const legendText = (
-	      filt_colormap.map( d =>
-	        <text
-	          key={tmp.indexOf(d.key)}
-	          fill='black'
-	          x={30}
-	          y={(tmp.indexOf(d.key) * 30)+30}
-	          style={{'fontSize': '12px', 'textAlign': 'left'}}
-	        >
-	          {d.key}
-	        </text>
-	      )
-	    )
-
-	    const legendCalc = (
-	      summedPoints.map( d =>
-	        <text
-	          key={tmp.indexOf(d.constructorRef)}
-	          fill='white'
-	          x={130}
-	          y={(tmp.indexOf(d.constructorRef) * 30)+30}
-	          style={{'fontSize': '14px', 'textAlign': 'middle', 'fontWeight': 'bold'}}
-	        > 
-	         {d.points}
-	        </text>
-	      )
-	    )
-	    
-	    const legendColorBar = (
-	      filt_colormap.map( d =>
-	        <rect
-	          key={tmp.indexOf(d.key)}
-	          fill={d.value}
-	          x={120}
-	          y={(tmp.indexOf(d.key) * 30)+15}
-	          width={30}
-	          height={30}
-	        />
-	      )
-	    )
-
+	    var filt_colormap = this.sortPoints(summedPoints, tmp)
+		
+		filt_colormap.forEach((d,i) => {
+			filt_colormap[i].id = tmp.indexOf(d.key)
+			filt_colormap[i].x = 30
+			filt_colormap[i].y = (tmp.indexOf(d.key) * 30)+60
+			
+		})
+		const legendText = drawText(filt_colormap, {pre:'label_', fontSize:'12px', textAnchor:'start', value:'key'})
+		
+		summedPoints.forEach((d,i) => {
+			summedPoints[i].id = tmp.indexOf(d.constructorRef)
+			summedPoints[i].x = 135
+			summedPoints[i].y = (tmp.indexOf(d.constructorRef) * 30)+60
+			
+		})
+		const legendCalc = drawText(summedPoints, {pre:'points_', fill:'white', fontSize:'14px', textAnchor:'middle', fontWeight:'bold', value:'points'})
+		
+		filt_colormap.forEach((d,i) => {
+			filt_colormap[i].x = 120
+			filt_colormap[i].y = (tmp.indexOf(d.key) * 30)+45
+			filt_colormap[i].color = d.value
+		})	    
+		const legendColorBar = drawRect(filt_colormap, {width:30, height:30})
+		
 	    return (
-	      <g>
-	      	<text x={120} y={0}>Points</text>
+	    <svg className='team-legend' width={Const.wrapper.width/6} height={Const.wrapper.height * (5/6)}>
+	      	<text x={120} y={30}>Points</text>
 	      	{legendColorBar}
 		    {legendText}
 		    {legendCalc}
-	      </g>
+		</svg>
 	    )
 	}
 

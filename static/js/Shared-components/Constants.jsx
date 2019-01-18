@@ -1,9 +1,9 @@
 import { scaleOrdinal } from 'd3-scale';
 
 export const width = 1400
-export const height = 600
+export const height = 550
 
-export const wrapper = { width: 1400, height: 600 }
+export const wrapper = { width: 1400, height: 550 }
 export const margins = { top: 60, right: 0, bottom: 0, left: 80 }
 export const svgDimensions = { width: wrapper.width - margins.left - margins.right, 
                     		   height: wrapper.height - margins.top - margins.bottom}
@@ -107,7 +107,7 @@ export const colorScale = scaleOrdinal()
 
 // STYLES
 export const textStyle = {
-  textAlign: 'center',
+  textAnchor: 'middle',
   fontWeight: 'bold',
   textTransform: 'uppercase',
   fontSize: '1.4rem'
@@ -119,7 +119,7 @@ export const legendStyle = {
 } 
 
 export const topLegendStyle = {
-  color: '#E0E0E0',
+  color: 'grey',
   fontSize: '1em',
   padding: '10px'
 } 
@@ -161,3 +161,16 @@ export const toaddStroke = (d, s) => {
   }
 }
 
+  export const filterAndSort = (selectedRace, selectedSeason, data, sort_value) => {
+	  var filtered =  data.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
+	  
+	  filtered.forEach((d,i) => {
+			filtered[i].driverRef = formatDriverNames(d.driverRef)
+		})
+		
+	  if (sort_value != ""){
+			filtered.sort((a, b) => { return (a[sort_value]) - (b[sort_value]) })
+	  }
+	  
+    return filtered
+  }

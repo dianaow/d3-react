@@ -2,66 +2,45 @@ import React,{ Component, Fragment } from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range } from 'd3-array';
 import Axis from '../Shared-components/Axis'
-import Bars from '../Shared-components/Bars'
+import { drawText } from '../Shared-components/TextBuilder';
+import { drawBar } from '../Shared-components/RectBuilder';
 import Legend from './Results-Legend'
 import * as Const from '../Shared-components/Constants';
 
 class BarChart extends Component {
 
-  constructor() {
-    super()
-    this.xscale = scaleBand()
-    this.yscale = scaleLinear()
-    this.colorScale = scaleOrdinal()
+  textStatus = (e) => {
+
+    if(e != "Finished" && e != "+1 Lap" && e != "+2 Laps" && e != "+3 Laps"  && e != "+4 Laps" ){
+      return e.substring(0,3).toUpperCase()
+    } else if(e == "Transmission" && e == "Clutch" && e == "Hydraulics"  && e == "Electrical" && e == "Radiator" && e == "Brakes"  && e == "Differential" && e == "Overheating"  && e == "Mechanical" && e == "Tyre" && e == "Puncture"  && e == "Drivershaft"){
+      return "MEC"
+    }
+     else {
+      return ""
+    }
   }
 
   render() {
     
     const data = this.props.qualData
     const raceData = this.props.raceData
-    const wrapper = { width: Const.width, height: Const.height }
-    const legendRight = { width: 200, height: 400 }
-    const legendBottom = { width: 1200, height: 50 }
-    const axisSpace = { width: 30, height: 30 }
-    const margins = { top: 20, right: 20, bottom: 20, left: 30 }
-    const svgDimensions = { width: wrapper.width - legendRight.width - axisSpace.width - margins.left - margins.right, 
-                            height: wrapper.height - axisSpace.height - margins.top - margins.bottom - legendBottom.height}
 
-    const xScale = this.xscale
+    const wrapper = { width: Const.width * (5/6), height: Const.height * (5/6)}
+    const margins = { top: 60, right: 0, bottom: 100, left: 60 }
+    const svgDimensions = { width: wrapper.width - margins.left - margins.right, 
+                           height: wrapper.height - margins.top - margins.bottom}
+
+
+    const xScale = scaleBand()
                       .padding(0.1)
                       .domain(data.map(d => d.driverRef))
                       .range([margins.left, svgDimensions.width])
 
-    const yScale = this.yscale
+    const yScale = scaleLinear()
                     .domain([0, max(data, d => d.position)])
                     .range([svgDimensions.height, margins.top])
 
-    const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
-                       {id:2, key: "mercedes", value: "#01d2be"},
-                       {id:3, key: "red_bull", value: "#09153B"},
-                       {id:4, key: "force_india", value: "#F595C8"},
-                       {id:5, key: "haas", value: "#828282"},
-                       {id:6, key: "mclaren", value: "#FF8700"},
-                       {id:7, key: "renault", value: "#FFD700"},
-                       {id:8, key: "sauber", value: "#9B0000"},
-                       {id:9, key: "toro_rosso", value: "#021688"},
-                       {id:10, key: "williams", value: "#002F5F"},
-                       {id:11, key: "manor", value: "#007AC0"}]
-
-    const colorScale = this.colorScale 
-                        .domain(teamColors.map(d => d.key))
-                        .range(teamColors.map(d => d.value))
-
-    const textStyle = {
-      textAlign: 'center',
-      fontWeight: 'bold',
-      textTransform: 'uppercase'
-    } 
-
-    const bottomLegendStyle = {
-      color: '#E0E0E0',
-      fontSize: '10px'
-    } 
 
     const yProps = {
       orient: 'Left',
@@ -71,40 +50,44 @@ class BarChart extends Component {
       tickValues: range(0, max(data, d => d.position)+1, 2)
     }
 
+    data.slice().forEach((d,i) => {
+			data[i].x = xScale(d.driverRef)
+			data[i].y = yScale(d.position)
+			data[i].color = Const.colorScale(d.constructorRef)
+			data[i].width = xScale.bandwidth()
+			data[i].height = svgDimensions.height - yScale(d.position)
+			data[i].stroke = Const.toaddStroke(d.driverRef, d.season) ? 'black': 'grey'
+		})	
+    const bars = drawBar(data)
+    
+    raceData.slice().forEach((d,i) => {
+		  raceData[i].x = xScale(d.driverRef) + xScale.bandwidth()/2
+			raceData[i].y = svgDimensions.height + margins.top/2
+			raceData[i].status = this.textStatus(d.status)
+		})	  
+		const status = drawText(raceData, {value: 'status'})
+
     return (
       <svg width={wrapper.width} height={wrapper.height}>
-        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
+        <g transform={"translate(" + (margins.left) + "," + (margins.top) + ")"}>
           <Axis {...yProps} />
-          <Bars
-            scales={{ xScale, yScale, colorScale}}
-            data={data}
-            raceData={raceData}
-            svgDimensions={svgDimensions}
-            margins={margins}
-            axisSpace={axisSpace}
-          />
+          {bars}
+          {status}
           <text 
-            style={textStyle}
-            transform={"translate(" + (- margins.left) + "," + (svgDimensions.height/2 + margins.top + axisSpace.height) + ")rotate(-90)"}>
+            style={Const.textStyle}
+            transform={"translate(" + 0 + "," + (svgDimensions.height/2 + margins.top) + ")rotate(-90)"}>
             Qualifying Position
           </text>
           <text 
-            style={textStyle}
-            transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height + margins.top) + ")"}>
+            style={Const.textStyle}
+            transform={"translate(" + (svgDimensions.width/2) + "," + (svgDimensions.height + margins.top) + ")"}>
             Race Finish Position
           </text>
           <text
-            style={bottomLegendStyle}
-            transform={"translate(" + (margins.left) + "," + (svgDimensions.height + axisSpace.height + legendBottom.height) + ")"}>
+            style={Const.topLegendStyle}
+            transform={"translate(" + (margins.left) + "," + (svgDimensions.height + margins.top + 20) + ")"}>
               ACC: Accident, COL: Collison, ENG: Engine, GEA: Gearbox, SPU: Spun Off, SUS: Suspension
           </text>
-        </g>
-        <g transform={"translate(" + (svgDimensions.width + axisSpace.width + margins.left + margins.right) + "," + (margins.top) + ")"}>
-          <Legend
-              colormap={teamColors}
-              data={data}
-              raceData={raceData}
-          />
         </g>
       </svg>
     );

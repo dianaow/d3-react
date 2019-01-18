@@ -56,8 +56,12 @@ class Bubbles extends Component {
   dataFormatting = (graph, races, laptimes) => {
 
     //console.log(graph, races, laptimes)
-    graph.data = graph.data.filter(d => d.season == 2016)
-
+    var arr = ['Australian Grand Prix', 'Bahrain Grand Prix', 'Chinese Grand Prix']
+    graph.data = graph.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
+    races.data = races.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
+    laptimes.data = laptimes.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
+    console.log(graph.data, races.data)
+    
     // Format JSON structure of race results to make it suitable for drawing nodes
     var res = []
     graph.data.forEach((d,i) => {
@@ -69,11 +73,6 @@ class Bubbles extends Component {
       d.label = Const.formatDriverNames(d.driverRef)
       d.laps = d.laps ? d.laps : 0
     })
-    
-    // Create nodes for each raceName and tyre category
-    //var cat1 = {'roundId': 200, 'id': 200, 'raceName': 'cat1', 'value': '', 'label': 'SS, S, M'}
-    //var cat2 = {'roundId': 300, 'id': 300, 'raceName': 'cat2', 'value': '', 'label': 'S, M, H'}
-    //var cat3 = {'roundId': 400, 'id': 400, 'raceName': 'cat3', 'value': '', 'label': 'US, SS, S'}
     
     // Create nodes for each raceName and title
     var mainTitle = {'roundId': 200, 'id': 200, 'raceName': 'FORMULA 1', 'value': '', 'label': 'FORMULA 1'}
@@ -94,8 +93,8 @@ class Bubbles extends Component {
     )
     //console.log(graph.links)
 
-    graph.data = graph.data.slice(0, -3)
-    graph.links = graph.links.slice(0, -3)
+    //graph.data = graph.data.slice(0, -3)
+    //graph.links = graph.links.slice(0, -3)
 
     // Find the maximum number of laps ran (Note: This may be different from the total number of laps run by each driver) 
     var maxLaps = nest()
@@ -376,7 +375,7 @@ class Bubbles extends Component {
       <div className="header">
         <Header/>
         <svg className='canvas' width={this.width} height={this.height} transform={"translate(" + this.margin.left + "," + this.margin.top + ")"}>
-          <text dx="700" dy="300" fontSize='3em' className="heavy">Loading...</text>
+          <text dx="700" dy="300" font-size='3em' class="heavy">Loading...</text>
         </svg>
       </div>
   	)

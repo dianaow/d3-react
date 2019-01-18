@@ -30,7 +30,7 @@ class LaptimesScatter extends Component {
     }
 
     this.wrapper = { width: Const.width, height: Const.height }
-    this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
+    this.margins = { top: 30, right: 0, bottom: 0, left: 80 }
     this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
@@ -127,23 +127,21 @@ class LaptimesScatter extends Component {
     var selectedSeason = seasons.find(d => (d.selected === true))
 
   	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0 && results.length !=0) {
-  	  console.log(laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season)))
 	    var LapsChart = 
 	      <ScatterPlot 
-  		    lapsData={laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}
-  		    resultsData={results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}
+  		    lapsData={Const.filterAndSort(selectedRace, selectedSeason, laptimes, '')}
+  		    resultsData={Const.filterAndSort(selectedRace, selectedSeason, results, 'position')}
           width={this.wrapper.width} 
           height={this.wrapper.height}
           zoomTransform={zoomTransform}
           zoomType={zoomType}
           /> 
       var Others = 
-        <div>
+        <div style={{marginLeft: this.margins.left}}>
           <Button onClick={this.resetted}>Reset</Button>
           <span style={Const.topLegendStyle}>Hover over the dots and scroll mouse wheel to zoom in and out</span>
-          <h4>LAP NUMBER</h4>
         </div>
-      var legend = <Legend data={results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}/>
+      var legend = <Legend data={Const.filterAndSort(selectedRace, selectedSeason, results, 'position')}/>
   	 } else {
   	 	var LapsChart = <Loading/>
       var Others = <div></div>
@@ -174,11 +172,15 @@ class LaptimesScatter extends Component {
             {Title}
     	    </div>
             {Others}
+          <div>
     	    <svg width={this.svgDimensions.width} height={this.svgDimensions.height} ref='svg'>
-    	    	{LapsChart}
+    	      <g transform={"translate(" + (this.margins.left) + "," + (this.margins.top) + ")"}>
+    	    	  {LapsChart}
+    	    	</g>
     	    </svg>
+    	    </div>
     	    <div>
-    	    {legend}
+    	      {legend}
     	    </div>
       	</div>
   	);

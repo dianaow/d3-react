@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { max, min, quantile } from 'd3-array';
 import axios from 'axios'
+import BarChart from '../Main-components/Results-BarChart'
+import Legend from '../Main-components/Laptimes-Legend'
+import PointsLegend from '../Main-components/Results-Legend'
 import Dropdown from '../Shared-components/Dropdown';
 import Loading from '../Shared-components/Loading';
-import BarChart from '../Main-components/Results-BarChart'
 import Header from '../Shared-components/Header'
+import * as Const from '../Shared-components/Constants';
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -62,6 +65,14 @@ class ResultsBar extends Component {
 
   filterAndSort_ResQual = (selectedRace, selectedSeason, results, quals, returnQual) => {
 
+    results.forEach((d,i) => {
+      results[i].driverRef = Const.formatDriverNames(d.driverRef)
+    })
+   
+    quals.forEach((d,i) => {
+      quals[i].driverRef = Const.formatDriverNames(d.driverRef)
+    })
+    
 	  var filteredResults = results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
     var filteredQualResults = quals.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
 
@@ -95,6 +106,8 @@ class ResultsBar extends Component {
 	      <BarChart 
 		        qualData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, true)} 
 		        raceData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, false)} />
+		  var legend = <Legend data={Const.filterAndSort(selectedRace, selectedSeason, results, 'position')}/>
+		  var pointsLegend = <PointsLegend data={Const.filterAndSort(selectedRace, selectedSeason, results, '')}/>
   	} else {
   	 	var ResultsChart = <Loading/>
   	}
@@ -124,7 +137,10 @@ class ResultsBar extends Component {
           {Title}
   	    </div>
   	    <div>
-  	    	{ResultsChart}
+  	    {ResultsChart}
+  	    {pointsLegend}
+  	    </div>
+  	    <div>
   	    </div>
   	  </div>
   	);

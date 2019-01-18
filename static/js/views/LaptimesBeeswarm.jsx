@@ -76,9 +76,9 @@ class LaptimesBeeswarm extends Component {
     if (races.length != 0 && seasons.length != 0 && laptimes.length != 0) {
     var distPlot = 
       <BeeswarmPlot
-		    lapsData={laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))}
+		    lapsData={Const.filterAndSort(selectedRace, selectedSeason, laptimes, '')}
         /> 
-      var legend = <Legend data={results}/>
+      var legend = <Legend data={Const.filterAndSort(selectedRace, selectedSeason, results, 'position')}/>
     } else {
       var distPlot = <Loading/>
     }
