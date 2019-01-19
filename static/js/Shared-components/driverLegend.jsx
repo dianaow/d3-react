@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
-import * as Const from '../Shared-components/Constants';
-import { drawCircle, drawCircleInteractive } from '../Shared-components/CircleBuilder';
-import { drawText } from '../Shared-components/TextBuilder';
+import * as Const from './Constants';
+import { drawCircle, drawCircleInteractive } from './CircleBuilder';
+import { drawText } from './TextBuilder';
 
 export default class Legend extends Component {
 	

@@ -2,10 +2,10 @@ import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range, sum, quantile } from 'd3-array';
 import * as d3Collection from 'd3-collection';
-import Axis from '../Shared-components/Axis'
-import ForceGraph from '../Shared-components/ForceGraph'
-import Loading from '../Shared-components/Loading';
-import * as Const from '../Shared-components/Constants';
+import ForceGraph from './ForceGraph'
+import Axis from '../../Shared-components/Axis'
+import Loading from '../../Shared-components/Loading';
+import * as Const from '../../Shared-components/Constants';
 
 class BeeswarmPlot extends Component {
 
@@ -137,10 +137,6 @@ class BeeswarmPlot extends Component {
       float:'left'
     }
 
-    const yaxis = {
-      float:'left'
-    }
-
     const wrap = {
       minWidth: this.wrapper.width,
       height: this.wrapper.height,
@@ -158,7 +154,7 @@ class BeeswarmPlot extends Component {
 
     return (
       <div style={wrap}>
-        <div id ='yaxis' style={yaxis}>
+        <div id ='yaxis' style={{float:'left'}}>
           <svg width={this.margins.left} height={this.wrapper.height}>
             <Axis {...yProps} />
           </svg>

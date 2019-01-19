@@ -1,11 +1,11 @@
 import React,{ Component, Fragment } from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range } from 'd3-array';
-import Axis from '../Shared-components/Axis'
-import { drawText } from '../Shared-components/TextBuilder';
-import { drawBar } from '../Shared-components/RectBuilder';
-import Legend from './Results-Legend'
-import * as Const from '../Shared-components/Constants';
+import Axis from '../../Shared-components/Axis'
+import Legend from '../../Shared-components/driverLegend'
+import { drawText } from '../../Shared-components/TextBuilder';
+import { drawBar } from '../../Shared-components/RectBuilder';
+import * as Const from '../../Shared-components/Constants';
 
 class BarChart extends Component {
 

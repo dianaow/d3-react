@@ -1,4 +1,5 @@
 import React,{ Component, Fragment } from 'react';
+import NodeGroup from "react-move/NodeGroup";
 import { scaleBand, scaleLinear, scaleOrdinal, scaleQuantize } from 'd3-scale';
 import { min, max, range, sum, permute, ticks } from 'd3-array';
 import { schemeSpectral } from 'd3-scale-chromatic';
@@ -7,32 +8,32 @@ import { easeCubicInOut } from 'd3-ease';
 import { timer, interval } from 'd3-timer';
 import * as d3Collection from 'd3-collection';
 import * as d3 from 'd3-shape';
-import Loading from '../Shared-components/Loading';
-import Axis from '../Shared-components/Axis'
-import * as Const from '../Shared-components/Constants';
-import NodeGroup from "react-move/NodeGroup";
+import Loading from '../../Shared-components/Loading';
+import Header from '../../Shared-components/Header'
+import Axis from '../../Shared-components/Axis'
+import * as Const from '../../Shared-components/Constants';
 
-  function Bar(props) {
-    return (
-        <rect
-          className='driverOneRace'
-          key={ props.data.key }
-          x={ props.data.x }
-          y={ props.data.y }
-          fill={ props.data.fill }
-          width={ props.data.width }
-          height={ props.data.height }
-          //style={{'mix-blend-mode': 'multiply'}}
-        />
-      )
-  }
+function Bar(props) {
+  return (
+      <rect
+        className='driverOneRace'
+        key={ props.data.key }
+        x={ props.data.x }
+        y={ props.data.y }
+        fill={ props.data.fill }
+        width={ props.data.width }
+        height={ props.data.height }
+        //style={{'mix-blend-mode': 'multiply'}}
+      />
+    )
+}
 
 class BarChart extends Component {
 
   constructor(props) {
     super(props)
 
-    this.wrapper = { width: Const.width, height: Const.height }
+    this.wrapper = { width: Const.width+50, height: Const.height }
     this.legendRight = { width: 100, height: 400 }
     this.axisSpace = { width: 30, height: 30 }
     this.margins = { top: 20, right: 20, bottom: 20, left: 30 }
@@ -108,7 +109,6 @@ class BarChart extends Component {
   
     function sortOn(property){
         return function(a, b){
-            console.log(a[property])
             if(a[property] < b[property]){
                 return -1;
             }else if(a[property] > b[property]){

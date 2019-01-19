@@ -1,11 +1,11 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import LaptimesBeeswarm from './views/LaptimesBeeswarm'
-import LaptimesScatter from './views/LaptimesScatter'
-import ResultsBar from './views/ResultsBar'
-import AllSortedResultsBar from './views/AllSortedResultsBar'
-import Bubbles from './views/Bubbles'
-import About from './views/About'
+import LaptimesBeeswarm from './Components/Laptimes-BeeswarmPlot/main'
+import LaptimesScatter from './Components/Laptimes-ScatterPlot/main'
+import ResultsBar from './Components/Results-BarChart/main'
+import SortedResultsBar from './Components/Results-Animation/main'
+import Bubbles from './Components/Results-Bubbles/main'
+import About from './Components/About'
 
 const Main = () => (
   <main>
@@ -15,8 +15,8 @@ const Main = () => (
       <Route path='/laptimes-beeswarmplot' component={LaptimesBeeswarm}/>
       <Route path='/laptimes-scatterplot' component={LaptimesScatter}/>
       <Route path='/results-barchart' component={ResultsBar}/>
-      <Route path='/animation' component={AllSortedResultsBar}/>
-      <Route path='/bubbles' component={Bubbles}/>
+      <Route path='/results-animation' component={SortedResultsBar}/>
+      <Route path='/results-bubbles' component={Bubbles}/>
     </Switch>
   </main>
 )

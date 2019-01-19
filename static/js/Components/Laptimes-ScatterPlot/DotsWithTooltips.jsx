@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import * as Const from './Constants';
-import { drawCircleInteractive } from './CircleBuilder';
+import * as Const from '../../Shared-components/Constants';
+import { drawCircleInteractive } from '../../Shared-components/CircleBuilder';
 
 export default class Dots extends Component {
 

@@ -8,9 +8,9 @@ import { scaleOrdinal, scaleSequential, scaleSqrt } from 'd3-scale';
 import { nest } from 'd3-collection';
 import { drag } from 'd3-drag'
 import * as d3 from 'd3-force';
-import * as Const from '../Shared-components/Constants';
-import { NodePieBuilder } from '../Shared-components/NodePieBuilder';
-import Header from '../Shared-components/Header'
+import Header from '../../Shared-components/Header'
+import * as Const from '../../Shared-components/Constants';
+import { NodePieBuilder } from '../../Shared-components/NodePieBuilder';
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -60,8 +60,7 @@ class Bubbles extends Component {
     graph.data = graph.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
     races.data = races.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
     laptimes.data = laptimes.data.filter(d =>(arr.indexOf(d.raceName) != -1) && (d.season == 2016))
-    console.log(graph.data, races.data)
-    
+
     // Format JSON structure of race results to make it suitable for drawing nodes
     var res = []
     graph.data.forEach((d,i) => {
@@ -375,7 +374,7 @@ class Bubbles extends Component {
       <div className="header">
         <Header/>
         <svg className='canvas' width={this.width} height={this.height} transform={"translate(" + this.margin.left + "," + this.margin.top + ")"}>
-          <text dx="700" dy="300" font-size='3em' class="heavy">Loading...</text>
+          <text dx="600" dy="300" fontSize='3em' className="heavy">Loading...</text>
         </svg>
       </div>
   	)

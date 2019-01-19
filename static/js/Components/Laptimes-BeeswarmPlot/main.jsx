@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { max, min, quantile } from 'd3-array';
 import axios from 'axios'
-import BeeswarmPlot from '../Main-components/Laptimes-BeeswarmPlot'
-import Legend from '../Main-components/Laptimes-Legend'
-import Dropdown from '../Shared-components/Dropdown';
-import Loading from '../Shared-components/Loading';
-import Header from '../Shared-components/Header'
-import * as Const from '../Shared-components/Constants';
+import BeeswarmPlot from './sub'
+import Legend from '../../Shared-components/driverLegend'
+import Dropdown from '../../Shared-components/Dropdown';
+import Loading from '../../Shared-components/Loading';
+import Header from '../../Shared-components/Header'
+import * as Const from '../../Shared-components/Constants';
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const LAPTIMES_SERVICE_URL = `${process.env.ROUNDED_LAPTIMES_SERVICE_URL}`

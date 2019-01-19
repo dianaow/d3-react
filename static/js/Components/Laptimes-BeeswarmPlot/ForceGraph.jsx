@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3-force';
-import * as Const from './Constants';
-import { drawCircle, drawCircleInteractive } from './CircleBuilder';
+import * as Const from '../../Shared-components/Constants';
+import { drawCircle, drawCircleInteractive } from '../../Shared-components/CircleBuilder';
 
 class ForceGraph extends Component {
 

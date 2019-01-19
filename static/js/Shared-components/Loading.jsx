@@ -1,5 +1,5 @@
 import React,{ Component, Fragment } from 'react';
-import * as Const from '../Shared-components/Constants';
+import * as Const from './Constants';
 
 export default class Loading extends Component {
 

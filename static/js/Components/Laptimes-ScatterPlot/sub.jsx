@@ -1,10 +1,10 @@
 import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range } from 'd3-array';
-import Axis from '../Shared-components/Axis'
-import Dots from '../Shared-components/Dots'
-import Tooltip from '../Shared-components/Tooltip'
-import * as Const from '../Shared-components/Constants';
+import Dots from './DotsWithTooltips'
+import Axis from '../../Shared-components/Axis'
+import Tooltip from '../../Shared-components/Tooltip'
+import * as Const from '../../Shared-components/Constants';
 
 class ScatterPlot extends Component {
 

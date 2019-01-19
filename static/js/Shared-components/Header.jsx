@@ -20,10 +20,10 @@ const Header = () => (
 				<LinkContainer to="/results-barchart">
 				    <ToggleButton value={4}>Bar Chart: Race vs Qual Results</ToggleButton>
 				</LinkContainer>
-				<LinkContainer to="/animation">
+				<LinkContainer to="/results-animation">
 				    <ToggleButton value={5}>Animation: Yearly Results</ToggleButton>
 				</LinkContainer>
-			    <LinkContainer to="/bubbles">
+			    <LinkContainer to="/results-bubbles">
 				    <ToggleButton value={6}>Force Layout: Race Results</ToggleButton>
 				</LinkContainer>
 		    </ToggleButtonGroup>

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { max, min, quantile } from 'd3-array';
 import axios from 'axios'
-import BarChart from '../Main-components/Results-BarChart'
-import Legend from '../Main-components/Laptimes-Legend'
-import PointsLegend from '../Main-components/Results-Legend'
-import Dropdown from '../Shared-components/Dropdown';
-import Loading from '../Shared-components/Loading';
-import Header from '../Shared-components/Header'
-import * as Const from '../Shared-components/Constants';
+import BarChart from './sub'
+import Legend from '../../Shared-components/driverLegend'
+import PointsLegend from '../../Shared-components/teamPoints'
+import Dropdown from '../../Shared-components/Dropdown';
+import Loading from '../../Shared-components/Loading';
+import Header from '../../Shared-components/Header'
+import * as Const from '../../Shared-components/Constants';
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -139,8 +139,6 @@ class ResultsBar extends Component {
   	    <div>
   	    {ResultsChart}
   	    {pointsLegend}
-  	    </div>
-  	    <div>
   	    </div>
   	  </div>
   	);

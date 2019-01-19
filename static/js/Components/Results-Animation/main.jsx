@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { max, min, quantile } from 'd3-array';
 import axios from 'axios'
-import Dropdown from '../Shared-components/Dropdown';
-import Loading from '../Shared-components/Loading';
-import BarChart from '../Main-components/Results-SortedBarChart'
-import Header from '../Shared-components/Header'
-import * as Const from '../Shared-components/Constants';
+import { max, min, quantile } from 'd3-array';
+import BarChart from './sub'
+import Dropdown from '../../Shared-components/Dropdown';
+import Loading from '../../Shared-components/Loading';
+import Header from '../../Shared-components/Header'
+import * as Const from '../../Shared-components/Constants';
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -80,11 +80,9 @@ class ResultsBar extends Component {
 	      <BarChart 
 		        raceData={this.filterAndSort(selectedSeason, results)} 
             racesList={races}
-            width="1500" 
-            height="600"
             play={this.state.play} />
   	} else {
-  	 	var ResultsChart = <Loading width="1500" height="600"/>
+  	 	var ResultsChart = <Loading/>
   	}
 
     if (races.length != 0 && seasons.length != 0)  {

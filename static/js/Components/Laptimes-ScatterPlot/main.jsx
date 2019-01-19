@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
+import axios from 'axios'
 import { max, min, quantile } from 'd3-array';
 import * as d3Zoom from 'd3-zoom'
 import { select, event } from 'd3-selection';
-//import {event as currentEvent, select as currentSelect} from 'd3-selection';
-import axios from 'axios'
-import ScatterPlot from '../Main-components/Laptimes-ScatterPlot'
-import Legend from '../Main-components/Laptimes-Legend'
-import Dropdown from '../Shared-components/Dropdown';
-import Loading from '../Shared-components/Loading';
-import Header from '../Shared-components/Header'
-import * as Const from '../Shared-components/Constants';
+import ScatterPlot from './sub'
+import Legend from '../../Shared-components/driverLegend'
+import Dropdown from '../../Shared-components/Dropdown';
+import Loading from '../../Shared-components/Loading';
+import Header from '../../Shared-components/Header'
+import * as Const from '../../Shared-components/Constants';
 import { Button } from 'react-bootstrap'
 
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
