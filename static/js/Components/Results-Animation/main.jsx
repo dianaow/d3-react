@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import { max, min, quantile } from 'd3-array';
+import { selectAll } from 'd3-selection'
 import BarChart from './sub'
 import Dropdown from '../../Shared-components/Dropdown';
 import Loading from '../../Shared-components/Loading';
@@ -23,7 +24,7 @@ class ResultsBar extends Component {
   }
 
   componentDidMount(){
-    console.log(RESULTS_SERVICE_URL)
+
   	const resultsRequest = axios.get(RESULTS_SERVICE_URL)
   								.then(response => {this.setState({results: response.data.data})})
                   .catch(error => {console.log(error)})
@@ -56,13 +57,6 @@ class ResultsBar extends Component {
     this.setState({key: data});
   }
 
-  filterAndSort = (selectedSeason, results) => {
-	  var filteredResults = results.filter(d => ( d.season === selectedSeason.season))
-    filteredResults.sort((a, b) => { return (a.position) - (b.position) })
-
-    return filteredResults
-  }
-
   initAnimation = () => {
     this.setState({ 
       play: 'true'
@@ -78,7 +72,7 @@ class ResultsBar extends Component {
   	if (seasons.length != 0 && results.length != 0) {
 	    var ResultsChart = 
 	      <BarChart 
-		        raceData={this.filterAndSort(selectedSeason, results)} 
+		        raceData={Const.filterAndSortSeason(selectedSeason, results, '')} 
             racesList={races}
             play={this.state.play} />
   	} else {

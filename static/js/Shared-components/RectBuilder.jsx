@@ -42,7 +42,7 @@ export const drawBar = (data, options) => {
 	var strokeWidth = getOptionOrDefault('strokeWidth', options);
     var opacity = getOptionOrDefault('opacity', options);
     var pre = getOptionOrDefault('pre', options);
-    
+
     return data.map((d,i) =>
 	  <rect
 	  	className={pre + i}
@@ -55,6 +55,7 @@ export const drawBar = (data, options) => {
 	    stroke={d.stroke}
 	    strokeWidth={strokeWidth}
 	    opacity={opacity}
+	    style={{'mixBlendMode': 'multiply'}}
 	  />
 	)
 }

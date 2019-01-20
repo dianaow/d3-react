@@ -161,16 +161,47 @@ export const toaddStroke = (d, s) => {
   }
 }
 
-  export const filterAndSort = (selectedRace, selectedSeason, data, sort_value) => {
-	  var filtered =  data.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
-	  
-	  filtered.forEach((d,i) => {
-			filtered[i].driverRef = formatDriverNames(d.driverRef)
-		})
-		
-	  if (sort_value != ""){
-			filtered.sort((a, b) => { return (a[sort_value]) - (b[sort_value]) })
-	  }
-	  
-    return filtered
+export const filterAndSort = (selectedRace, selectedSeason, data, sort_value) => {
+
+  var filtered =  data.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
+  
+  filtered.forEach((d,i) => {
+		filtered[i].driverRef = formatDriverNames(d.driverRef)
+	})
+	
+  if (sort_value != ""){
+		filtered.sort((a, b) => { return (a[sort_value]) - (b[sort_value]) })
   }
+  
+return filtered
+}
+
+export const filterAndSortSeason = (selectedSeason, data, sort_value) => {
+  
+  var filtered = data.filter(d => ( d.season === selectedSeason.season))
+
+  filtered.forEach((d,i) => {
+		filtered[i].driverRef = formatDriverNames(d.driverRef)
+	})
+	
+  if (sort_value != ""){
+		filtered.sort((a, b) => { return (a[sort_value]) - (b[sort_value]) })
+  }
+  
+return filtered
+}
+
+export const sortOn = (property) => {
+    return function(a, b){
+        if(a[property] < b[property]){
+            return -1;
+        }else if(a[property] > b[property]){
+            return 1;
+        }else{
+            return 0;   
+        }
+    }
+}
+
+
+

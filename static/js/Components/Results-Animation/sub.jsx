@@ -12,28 +12,15 @@ import Loading from '../../Shared-components/Loading';
 import Header from '../../Shared-components/Header'
 import Axis from '../../Shared-components/Axis'
 import * as Const from '../../Shared-components/Constants';
-
-function Bar(props) {
-  return (
-      <rect
-        className='driverOneRace'
-        key={ props.data.key }
-        x={ props.data.x }
-        y={ props.data.y }
-        fill={ props.data.fill }
-        width={ props.data.width }
-        height={ props.data.height }
-        //style={{'mix-blend-mode': 'multiply'}}
-      />
-    )
-}
+import { drawText } from '../../Shared-components/TextBuilder';
+import { drawRect, drawBar } from '../../Shared-components/RectBuilder';
 
 class BarChart extends Component {
 
   constructor(props) {
     super(props)
 
-    this.wrapper = { width: Const.width+50, height: Const.height }
+    this.wrapper = { width: Const.width, height: Const.height }
     this.legendRight = { width: 100, height: 400 }
     this.axisSpace = { width: 30, height: 30 }
     this.margins = { top: 20, right: 20, bottom: 20, left: 30 }
@@ -45,10 +32,14 @@ class BarChart extends Component {
 
     this.yScale = scaleLinear()
                     .range([this.svgDimensions.height, this.margins.top])
+                    .domain([0, 300])
 
     this.state = {
-      dataOneRace: [],
+      stackedData_flat: [],
       stackedData: [],
+      races: [],
+      xProps: [],
+      yProps: [],
       counter: 0
     }
 
@@ -69,7 +60,7 @@ class BarChart extends Component {
 
   initIteration = () => {
      var Timer = interval(t => {
-      if (this.state.counter == this.props.racesList.length) {
+      if (this.state.counter == this.racesList.length) {
         Timer.stop()
       } else {
         this.showRaceOnebyOne()
@@ -78,222 +69,156 @@ class BarChart extends Component {
 
   }
 
-  showRaceOnebyOne = () => {
-    let tmp = this.state.stackedData.filter(d => d.index <= this.state.counter)
-    let flattened = tmp.reduce(function(a, b) {
-        return a.concat(b);
-    }, []);
-    //console.log(flattened)
-    this.setState({dataOneRace: flattened, counter: this.state.counter+1})
-  }
-
   restructureData = (data) => {
 
+    // Create a scale of race-color label pairings (list of races may change year on year, hence i choose to place it within this function instead of constructor)
+    this.racesList = this.props.racesList
+    this.color = scaleOrdinal()
+                    .domain(this.racesList)
+                    .range(schemeSpectral[11])
+
+    // Prep races data for legend render
+    var races = []
+    this.racesList.map((d,i) => races.push({
+      x : 0,
+      y : i * 30,
+      color : this.color(d),
+      raceName : d 
+    }))
+
+    // Nest data with driver set as key
     var data1 =  d3Collection.nest()
-                    .key(d => Const.formatDriverNames(d.driverRef))
+                    .key(d => d.driverRef)
                     .entries(data)
-
+ 
+    // Find list of drivers participating in season 
+    // This include drivers signed-on as official drivers and reserve drivers who participared in one/some races only. A better way would be to retrieve list of driver participants of each race )
     var driverList = data1.map(d => d.key)
-    var races_order = range(this.props.racesList.length - 1).sort((i, j) => i - j)
-    
-    var mapped = this.props.racesList.map(R => driverList.map(P => `${R}_${P}`))
 
-    // Compute the total points achieved by driver in season by summing points across races.
-    var totalPoints = []
-    data1.forEach((d,i) => {
-      var sum = d.values.reduce((a, {points}) => {
-          return a+points
-        }, 0);
-      totalPoints.push(sum)
-    })
-  
-    function sortOn(property){
-        return function(a, b){
-            if(a[property] < b[property]){
-                return -1;
-            }else if(a[property] > b[property]){
-                return 1;
-            }else{
-                return 0;   
-            }
-        }
-    }
-    
-    data1 = data1.map(d => d.values.sort(sortOn("roundId")))
+    // Ensure that all drivers have the same sort arrangement of races
+    data1 = data1.map(d => d.values.sort(Const.sortOn("roundId")))
     //console.log(data1)
     
     // Construct an array of arrays where dataNew[i][j] is the point achived for driverRef i and raceName j.
+    // Bug fix: If a driver in driverList has not participated in a race, points = NaN. Impute as 0.
     var dataNew = []
     var eachPoints = []
-    data1.forEach((d,i) => {
-      
-      var oneDriverRace = []
-      d.map(p => oneDriverRace.push(p.points))
+    data1.map((D,I) => {
+      var oneDriverRace = Array.from(Array(this.racesList.length), () => 0)
+      D.map((d,i) => {
+        oneDriverRace[d.roundId-1] = d.points
+      })
       dataNew.push(oneDriverRace)
     })
     //console.log(dataNew)
 
-    // Compute the desired order of drivers by descending total points.
-    var order = range(data1.length - 1).sort((i, j) => totalPoints[j] - totalPoints[i]);
+    // Fix the order arrangement of drivers
+    var order = range(data1.length).sort((i, j) => driverList[j] - driverList[i])
 
-    var stackedData = Object.assign(d3.stack().keys(range(this.props.racesList.length))(permute(dataNew, order)), {
-      keys: this.props.racesList,
-      ids: mapped,
-      totals: permute(totalPoints, order),
-      driverRef: permute(driverList, order)
+    // Constructs a stack layout based on data 
+    // d3's permute ensures each individual array is sorted in the same order. Important to ensure sort arrangement is aligned for all parameters before stack layout)
+    var stackedData = Object.assign(d3.stack().keys(range(this.racesList.length))(permute(dataNew, order)), {
+      keys: this.racesList,
+      ids: this.racesList.map(R => driverList.map(P => `${R}_${P}`)),
+      driverRef: driverList
     })
-
-    this.xScale = this.xScale
-                    .domain(stackedData.driverRef)
-
-    this.yScale = this.yScale
-                    .domain([0, max(stackedData.totals)])
-
-    const xbandSize = this.xScale.bandwidth()
-
-    this.color = scaleOrdinal()
-                    .domain(stackedData.keys)
-                    .range(schemeSpectral[11])
 
     stackedData.forEach((d,i) =>
       stackedData.driverRef.forEach((D,I) => {
         stackedData[i][I].key = stackedData.ids[i][I]
-        stackedData[i][I].x = this.xScale(D)
-        stackedData[i][I].y = ( d[I][1] ? this.yScale(d[I][1]) : this.yScale(0) ) 
-        stackedData[i][I].fill = this.color(stackedData.keys[i]) 
-        stackedData[i][I].width = this.xScale.bandwidth()
-        stackedData[i][I].height = ( d[I][0] ? this.yScale(d[I][0]) : this.yScale(0) ) - ( d[I][1] ? this.yScale(d[I][1]) : this.yScale(0) )
+        stackedData[i][I].color = this.color(stackedData.keys[i]) 
       })
     )
-    console.log(stackedData)
+    //console.log(stackedData)
 
-    this.setState({stackedData})
+    this.setState({stackedData, races})
   }
 
-  updateD3() {
+  showRaceOnebyOne = () => {
+    // Filter full race results to only include races up until that iteration (eg. iteration1: race1, iteration2: race1,race2)
+    let acc = this.state.stackedData.filter(d => d.index <= this.state.counter)
+    let flattened = acc.reduce(function(a, b) {
+        return a.concat(b);
+    }, []);
 
-    const {stackedData, dataOneRace} = this.state
-    //console.log(stackedData, dataOneRace)
+    // Filter full race results to only include race of that iteration (eg. iteration2: race2)
+    // Retrieve the sort order of drivers in descending order of points achieved in a particular race
+    let tmp = this.state.stackedData.filter(d => d.index == this.state.counter)
+    tmp[0].sort((a, b) => { return (b[1]) - (a[1]) })
+    var sortOrder = tmp[0].map((d,i) => d.key.split("_").pop())
+    //console.log(sortOrder)
 
-    const xProps = {
+    // Update x-scale based on new sort order of drivers
+    this.xScale.domain(sortOrder)
+
+    // Update the coordinates for bar render
+    flattened.forEach((d,i) => {
+        flattened[i].x = this.xScale(d.key.split("_").pop())
+        flattened[i].y = ( d[1] ? this.yScale(d[1]) : this.yScale(0) ) 
+        flattened[i].width = this.xScale.bandwidth()
+        flattened[i].height = ( d[0] ? this.yScale(d[0]) : this.yScale(0) ) - ( d[1] ? this.yScale(d[1]) : this.yScale(0) )
+    })
+    //console.log(flattened)
+
+    // Update x-axis properties based on new driver sort
+    const xProps = [{
       orient: 'Bottom',
       scale: this.xScale,
       translate: `translate(0, ${this.svgDimensions.height})`,
       tickSize: -10
-    }
+    }]
 
-    const yProps = {
+    // No need for y-axis properties to be updated. (Placing it in this function rather than in constructor, in case it may be dependent on other functions)
+    const yProps = [{
       orient: 'Left',
       scale: this.yScale,
       translate: `translate(${this.margins.left}, 0)`,
       tickSize: -10,
-      tickValues: range(0, max(stackedData.totals)+1, 5)
+      tickValues: range(0, 300+1, 25)
       //tickValues: ticks(0, max(stackedData.totals), 10)
-    }
+    }]
 
-    const legendColorBar = (
-      stackedData.keys.map((d,i) =>
-        <g transform={"translate(" + 0 + "," + (i*20) + ")"}> 
-          <rect
-            fill={this.color(stackedData.keys[i])}
-            x={0}
-            width={20}
-            height={20}
-          />
-          <text
-            x={25}
-            dy="0.35em"
-            alignmentBaseline="middle"
-            style={Const.legendStyle}
-          >
-            {d}
-          </text>
-        </g>
-      )
-    )
-
-    const BarGroup = (
-      <svg width={this.wrapper.width} height={this.wrapper.height} className='stackedWrapper'>
-        <g transform={"translate(" + (this.axisSpace.width + this.margins.left) + "," + (this.margins.top) + ")"}>
-          <Axis {...xProps} />
-          <Axis {...yProps} />
-            <NodeGroup
-              data={dataOneRace}
-              keyAccessor={d => d.key}
-              start={this.startTransition}
-              enter={this.enterTransition}
-              update={this.updateTransition}
-            >
-              {nodes => (
-                <g>
-                  {nodes.map(({ key, data, state }) => (
-                    <Bar key={key} data={data} state={state} />
-                  ))}
-                </g>
-              )}
-            </NodeGroup>
-          <text 
-            style={Const.textStyle}
-            transform={"translate(" + (- this.margins.left) + "," + (this.svgDimensions.height/2 + this.margins.top + this.axisSpace.height) + ")rotate(-90)"}>
-            Points
-          </text>
-          <text 
-            style={Const.textStyle}
-            transform={"translate(" + (this.svgDimensions.width/2 - this.axisSpace.width - this.margins.left) + "," + (this.svgDimensions.height + this.axisSpace.height + this.margins.top) + ")"}>
-            Driver
-          </text>
-        </g>
-        <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width) + "," + (this.margins.top) + ")"}>
-          {legendColorBar}
-        </g>
-      </svg>
-    )
-    
-    return BarGroup
-  }
-
-  autoSortD3() {
-
-    const BarGroup = this.updateD3()
-
-    const {dataOneRace} = this.state
-
-    const svg = select('.stackedWrapper')
-    const bar = selectAll('driverOneRace')
-    const gx = select('.Axis-bottom')
-
-    const t = svg.transition()
-      .duration(750);
-
-    bar.data(dataOneRace, d => d[1])
-        .order()
-      .transition(t)
-        .delay((d, i) => i * 20)
-        .attr("x", d => d.x);
-
-  }
-
-  startTransition(d, i) {
-    return { value: d[1], y: d.y, opacity: 0 };
-  }
-
-  enterTransition(d) {
-    return { value: d[1], opacity: [1], timing: { duration: 250 } };
-  }
-
-  updateTransition(d, i) {
-    return { value: d[1], y: d[1], opacity: [1], timing: { duration: 300 } };
+    this.setState({stackedData_flat: flattened, counter: this.state.counter+1, xProps: xProps, yProps: yProps})
   }
 
   render() {
 
-    if ((this.state.stackedData.length != 0) & (this.state.dataOneRace.length != 0)) {
-      //this.autoSortD3()
-      const BarGroup = this.updateD3()
-      return(BarGroup)
-    } else {
-      return(<Loading width="1550" height="600"/>)
-    }
+    const {stackedData_flat, races, xProps, yProps} = this.state
+
+    if ((stackedData_flat.length != 0) & (xProps.length != 0) & (yProps.length != 0) & (races.length != 0)) {
+
+      const stackedBars = drawBar(stackedData_flat, {strokeWidth: 0})
+      const legendColor = drawRect(races, {pre:'legendColor_', width:30, height:30})
+      const legendText = drawText(races, {pre:'legendText_', value: 'raceName'})
+
+      return(
+        <svg width={this.wrapper.width} height={this.wrapper.height} className='stackedWrapper'>
+          <g transform={"translate(" + (this.axisSpace.width + this.margins.left) + "," + (this.margins.top) + ")"}>
+            <Axis {...xProps[0]} />
+            <Axis {...yProps[0]} />
+            {stackedBars}
+            <text 
+              style={Const.textStyle}
+              transform={"translate(" + (- this.margins.left) + "," + (this.svgDimensions.height/2 + this.margins.top + this.axisSpace.height) + ")rotate(-90)"}>
+              Points
+            </text>
+            <text 
+              style={Const.textStyle}
+              transform={"translate(" + (this.svgDimensions.width/2 - this.axisSpace.width - this.margins.left) + "," + (this.svgDimensions.height + this.axisSpace.height + this.margins.top) + ")"}>
+              Driver
+            </text>
+          </g>
+          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width) + "," + (this.margins.top) + ")"}>
+            {legendColor}
+          </g>
+          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width + 90) + "," + (this.margins.top + 15) + ")"}>
+            {legendText}
+          </g>
+        </svg>
+    )
+  } else {
+    return(<Loading/>)
+  }
 
   }
 
