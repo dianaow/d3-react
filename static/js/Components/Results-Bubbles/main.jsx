@@ -364,7 +364,7 @@ class Bubbles extends Component {
 
   render() {
 
-  	const {graph} = this.state
+    const {graph} = this.state
 
     if (graph.length != 0) {
       this.renderForceLayout(graph) 
@@ -377,7 +377,7 @@ class Bubbles extends Component {
           <text dx="600" dy="300" fontSize='3em' className="heavy">Loading...</text>
         </svg>
       </div>
-  	)
+    )
 
   }
 

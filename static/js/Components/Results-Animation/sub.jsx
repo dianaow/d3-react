@@ -2,9 +2,9 @@ import React,{ Component, Fragment } from 'react';
 import NodeGroup from "react-move/NodeGroup";
 import { scaleBand, scaleLinear, scaleOrdinal, scaleQuantize } from 'd3-scale';
 import { min, max, range, sum, permute, ticks } from 'd3-array';
-import { schemeSpectral } from 'd3-scale-chromatic';
+import { schemeRdYlBu, schemePiYG } from 'd3-scale-chromatic';
 import { select, selectAll } from 'd3-selection';
-import { easeCubicInOut } from 'd3-ease';
+import { easeCubicInOut, easeLinear } from 'd3-ease';
 import { timer, interval } from 'd3-timer';
 import * as d3Collection from 'd3-collection';
 import * as d3 from 'd3-shape';
@@ -63,9 +63,10 @@ class BarChart extends Component {
       if (this.state.counter == this.racesList.length) {
         Timer.stop()
       } else {
+        //console.log('one iteration')
         this.showRaceOnebyOne()
       }
-     }, 1000)
+     }, 2000)
 
   }
 
@@ -75,13 +76,13 @@ class BarChart extends Component {
     this.racesList = this.props.racesList
     this.color = scaleOrdinal()
                     .domain(this.racesList)
-                    .range(schemeSpectral[11])
+                    .range(schemeRdYlBu[11].concat(schemePiYG[11]))
 
     // Prep races data for legend render
     var races = []
     this.racesList.map((d,i) => races.push({
       x : 0,
-      y : i * 30,
+      y : i * 20,
       color : this.color(d),
       raceName : d 
     }))
@@ -140,6 +141,7 @@ class BarChart extends Component {
     let flattened = acc.reduce(function(a, b) {
         return a.concat(b);
     }, []);
+    //console.log(flattened)
 
     // Filter full race results to only include race of that iteration (eg. iteration2: race2)
     // Retrieve the sort order of drivers in descending order of points achieved in a particular race
@@ -179,6 +181,7 @@ class BarChart extends Component {
     }]
 
     this.setState({stackedData_flat: flattened, counter: this.state.counter+1, xProps: xProps, yProps: yProps})
+
   }
 
   render() {
@@ -188,7 +191,7 @@ class BarChart extends Component {
     if ((stackedData_flat.length != 0) & (xProps.length != 0) & (yProps.length != 0) & (races.length != 0)) {
 
       const stackedBars = drawBar(stackedData_flat, {strokeWidth: 0})
-      const legendColor = drawRect(races, {pre:'legendColor_', width:30, height:30})
+      const legendColor = drawRect(races, {pre:'legendColor_', width:20, height:20})
       const legendText = drawText(races, {pre:'legendText_', value: 'raceName'})
 
       return(
@@ -208,10 +211,10 @@ class BarChart extends Component {
               Driver
             </text>
           </g>
-          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width) + "," + (this.margins.top) + ")"}>
+          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width) + "," + 0 + ")"}>
             {legendColor}
           </g>
-          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width + 90) + "," + (this.margins.top + 15) + ")"}>
+          <g transform={"translate(" + (this.svgDimensions.width-this.legendRight.width + 90) + "," + 15 + ")"}>
             {legendText}
           </g>
         </svg>

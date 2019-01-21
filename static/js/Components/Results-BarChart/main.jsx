@@ -66,11 +66,12 @@ class ResultsBar extends Component {
   filterAndSort_ResQual = (selectedRace, selectedSeason, results, quals, returnQual) => {
 
     results.forEach((d,i) => {
-      results[i].driverRef = Const.formatDriverNames(d.driverRef)
+      results[i].driverRef = Const.name_shortform(Const.formatDriverNames(d.driverRef))
+      results[i].status = Const.status_shortform(d.status)
     })
    
     quals.forEach((d,i) => {
-      quals[i].driverRef = Const.formatDriverNames(d.driverRef)
+      quals[i].driverRef = Const.name_shortform(Const.formatDriverNames(d.driverRef))
     })
     
 	  var filteredResults = results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))

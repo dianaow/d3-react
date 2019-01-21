@@ -119,8 +119,8 @@ export const legendStyle = {
 } 
 
 export const topLegendStyle = {
-  color: 'grey',
-  fontSize: '1em',
+  color: '#d3d3d3',
+  fontSize: '0.8em',
   padding: '10px'
 } 
 
@@ -137,6 +137,28 @@ export const formatDriverNames = (e) => {
   } else {
     return e
   }
+}
+
+export const name_shortform = (n) => {
+	if(n === 'magnussen'){
+	  return 'kmag'
+	} else if (n === 'hulkenberg'){
+	  return 'hulk'
+	} else if (n === 'grosjean') {
+	  return 'grosj'
+	} else if (n === 'raikkonen') {
+	  return 'kimi'
+	} else {
+	  return n
+	}
+}
+
+export const status_shortform = (e) => {
+    if(e != "Finished" && e != "+1 Lap" && e != "+2 Laps" && e != "+3 Laps"  && e != "+4 Laps" ){
+      return e.substring(0,3).toUpperCase()
+    } else {
+      return ""
+    }
 }
 
 export const toaddStroke = (d, s) => {
@@ -166,7 +188,7 @@ export const filterAndSort = (selectedRace, selectedSeason, data, sort_value) =>
   var filtered =  data.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
   
   filtered.forEach((d,i) => {
-		filtered[i].driverRef = formatDriverNames(d.driverRef)
+		filtered[i].driverRef = name_shortform(formatDriverNames(d.driverRef))
 	})
 	
   if (sort_value != ""){
@@ -181,7 +203,7 @@ export const filterAndSortSeason = (selectedSeason, data, sort_value) => {
   var filtered = data.filter(d => ( d.season === selectedSeason.season))
 
   filtered.forEach((d,i) => {
-		filtered[i].driverRef = formatDriverNames(d.driverRef)
+		filtered[i].driverRef = name_shortform(formatDriverNames(d.driverRef))
 	})
 	
   if (sort_value != ""){
@@ -202,6 +224,3 @@ export const sortOn = (property) => {
         }
     }
 }
-
-
-

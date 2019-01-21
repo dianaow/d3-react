@@ -46,7 +46,7 @@ export const drawBar = (data, options) => {
     return data.map((d,i) =>
 	  <rect
 	  	className={pre + i}
-	    key={d.id}
+	    key={d.key}
 	    x={d.x}
 	    y={d.y}
 	    width={d.width}

@@ -63,22 +63,22 @@ export default class Legend extends Component {
 		
 		summedPoints.forEach((d,i) => {
 			summedPoints[i].id = tmp.indexOf(d.constructorRef)
-			summedPoints[i].x = 135
+			summedPoints[i].x = 115
 			summedPoints[i].y = (tmp.indexOf(d.constructorRef) * 30)+60
 			
 		})
 		const legendCalc = drawText(summedPoints, {pre:'points_', fill:'white', fontSize:'14px', textAnchor:'middle', fontWeight:'bold', value:'points'})
 		
 		filt_colormap.forEach((d,i) => {
-			filt_colormap[i].x = 120
+			filt_colormap[i].x = 100
 			filt_colormap[i].y = (tmp.indexOf(d.key) * 30)+45
 			filt_colormap[i].color = d.value
 		})	    
 		const legendColorBar = drawRect(filt_colormap, {width:30, height:30})
 		
 	    return (
-	    <svg className='team-legend' width={Const.wrapper.width/6} height={Const.wrapper.height * (5/6)}>
-	      	<text x={120} y={30}>Points</text>
+	    <svg className='team-legend' width={Const.wrapper.width/8} height={Const.wrapper.height}>
+	      	<text x={100} y={30}>Points</text>
 	      	{legendColorBar}
 		    {legendText}
 		    {legendCalc}
