@@ -6,9 +6,9 @@ class About extends Component {
   render() {
 
 	  const moveimage = {
-		    position: "relative",
-		    top: "-40px",
-		    paddingRight: "10px"
+	    position: "relative",
+	    top: "-40px",
+	    paddingRight: "10px"
 		}
 
 	  return (

@@ -68,8 +68,7 @@ class BarChart extends Component {
     })
 
     if (idx.length != 0) {
-      var labels = 
-        <Labels data={idx} xScale={xScale} margins={margins} svgDimensions={svgDimensions}/>
+      var labels = <Labels data={idx} xScale={xScale} margins={margins} svgDimensions={svgDimensions}/>
     } else {
       var labels = <g></g>
     }
@@ -100,6 +99,7 @@ class BarChart extends Component {
         </g>
       </svg>
     );
+    
   }
 
 };

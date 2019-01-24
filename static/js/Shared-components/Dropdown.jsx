@@ -32,8 +32,9 @@ class Dropdown extends Component{
   }
 
   render(){
-    const{list} = this.props
+    const{list, selected} = this.props
     const{listOpen, headerTitle} = this.state
+
     return(
       <div className="dd-wrapper">
         <div className="dd-header" onClick={this.toggleList}>

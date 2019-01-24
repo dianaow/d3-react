@@ -13,7 +13,7 @@ export default class Legend extends Component {
 			data[i].x = (i+1)*62
 			data[i].y = 10
 			data[i].color = Const.colorScale(d.constructorRef)
-        	data[i].stroke = Const.toaddStroke(d.driverRef, d.season) ? 'black': 'grey'
+        	data[i].stroke = Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white'
 		})
 		const dots = drawCircle(data, {pre:'dots_'})
 		

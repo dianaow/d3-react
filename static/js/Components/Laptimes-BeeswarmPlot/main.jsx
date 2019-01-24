@@ -54,10 +54,10 @@ class LaptimesBeeswarm extends Component {
     const uniqYears = [...new Set(races.map(d => d.season))]
     const uniqRaces = [...new Set(races.map(d => d.raceName))]
     races =  uniqRaces.map((y, index) => ({id: index, raceName:y, selected: false, key: 'races' }) )
-  	const seasons =  uniqYears.map((y, index) => ({id: index, season:y, selected: false, key: 'seasons' }) )
-  	seasons[0].selected = true;
-  	races[0].selected = true;
-  	this.setState({seasons, races})
+    const seasons =  uniqYears.map((y, index) => ({id: index, season:y, selected: false, key: 'seasons' }) )
+    seasons[0].selected = true;
+    races[0].selected = true;
+    this.setState({seasons, races})
   }
 
   resetThenSet = (value, key) => {
@@ -69,14 +69,14 @@ class LaptimesBeeswarm extends Component {
 
   render() {
 
-  	const {races, seasons, laptimes, results} = this.state
+    const {races, seasons, laptimes, results} = this.state
     var selectedRace = races.find(d => (d.selected === true))
     var selectedSeason = seasons.find(d => (d.selected === true))
     
     if (races.length != 0 && seasons.length != 0 && laptimes.length != 0) {
     var distPlot = 
       <BeeswarmPlot
-		    lapsData={Const.filterAndSort(selectedRace, selectedSeason, laptimes, '')}
+        lapsData={Const.filterAndSort(selectedRace, selectedSeason, laptimes, '')}
         /> 
       var legend = <Legend data={Const.filterAndSort(selectedRace, selectedSeason, results, 'position')}/>
     } else {
@@ -90,27 +90,27 @@ class LaptimesBeeswarm extends Component {
     }
 
     return (
-  	  <div className="header">
+      <div className="header">
         <Header/>
-  	    <div className="wrapper">
-  	      <Dropdown
-  	        title="Year"
-  	        col="season"
-  	        list={seasons}
-  	        resetThenSet={this.resetThenSet}
-  	      />
-  	      <Dropdown
-  	        title="Select a race"
-  	        col="raceName"
-  	        list={races}
-  	        resetThenSet={this.resetThenSet}
-  	      />
+        <div className="wrapper">
+          <Dropdown
+            title="Year"
+            col="season"
+            list={seasons}
+            resetThenSet={this.resetThenSet}
+          />
+          <Dropdown
+            title="Select a race"
+            col="raceName"
+            list={races}
+            resetThenSet={this.resetThenSet}
+          />
           {Title}
-  	    </div>
+        </div>
         {distPlot}
         {legend}
-  	  </div>
-  	);
+      </div>
+    );
 
   }
 

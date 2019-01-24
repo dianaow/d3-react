@@ -39,7 +39,7 @@ class Labels extends Component {
         className={Const.textStyle}
         x={xScale(idx[0])+5}
         y={0}>
-        'Did Not Finish'
+        {((xScale(idx.slice(-1)[0]) - xScale(idx[0])) < xScale.bandwidth()*2) ? "DNF" : 'Did Not Finish'}
       </text>
     )
 
