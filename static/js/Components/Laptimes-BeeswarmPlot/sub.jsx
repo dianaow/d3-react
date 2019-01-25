@@ -1,11 +1,11 @@
 import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
-import { min, max, range, sum, quantile } from 'd3-array';
-import * as d3Collection from 'd3-collection';
-import ForceGraph from './ForceGraph'
+import { selectAll } from 'd3-selection'
+import { min, max, range } from 'd3-array';
+import * as d3 from 'd3-force';
 import Axis from '../../Shared-components/Axis'
-import Loading from '../../Shared-components/Loading';
 import * as Const from '../../Shared-components/Constants';
+import ForceGraph from './ForceGraph'
 
 class BeeswarmPlot extends Component {
 
@@ -13,122 +13,61 @@ class BeeswarmPlot extends Component {
 		super(props)
 
 		this.wrapper = { width: Const.width, height: Const.height}
-		this.margins = { top: 60, right: 0, bottom: 0, left: 80 }
+		this.margins = { top: 60, right: 0, bottom: 0, left: 100 }
 		this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
 													 height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
-		this.xScale = scaleBand()
-										.rangeRound([0, this.svgDimensions.width*2])
-										.padding(1)
+		this.xScale = scaleLinear()
+										.rangeRound([0, this.svgDimensions.width*4])
 
 		this.yScale = scaleBand()
-										.rangeRound([this.svgDimensions.height, this.margins.top])
+										.rangeRound([this.svgDimensions.height, 0])
+                    .padding(1)
 
 	}
-
-	getKeyValues = (arr) => {
-		return arr.reduce((a,b) => {
-			let keys = Object.keys(b);
-			keys.forEach(v => {
-				a.push(v)
-			});
-		return a
-		}, [])
-	}
-
-	pruneObject = (object, desiredKeys) => {
-		Object.keys(object)
-			.filter(key => !desiredKeys.includes(key))  //Ignore desired keys
-			.forEach(key => delete object[key])         //Remove the leftovers
-	}
-	
-	createNodes = (lapsData, xScale, yScale) => {
-
-		var data = lapsData.slice()
-
-		// Get an array of all the sorted 'values' columns (or 1 sec intervals) 
-		var value_fields = range(85.0, 111.0, 1)
-		value_fields = value_fields.sort((a, b) => { return a-b })
-		value_fields = value_fields.map(d => d.toFixed(1))
-		var value_fields_str = value_fields.map(d => d.toString())
-
-		xScale.domain(value_fields_str)
-		yScale.domain(lapsData.map(d => d.constructorRef))
-
-		// Add back the string labels
-		var newItems = ['constructorRef','driverRef', 'season', 'raceName']; 
-		let arr = value_fields.slice()
-		arr.push(...newItems); 
-
-		//Prune columns 'values' not in arr for each driver
-		data.forEach((item,index) => this.pruneObject(item, arr)); 
-
-		// Nest the data by driver name
-		var drivers = d3Collection.nest()
-										.key(d => Const.formatDriverNames(d.driverRef))
-										.entries(data)
-
-		var nodes = [];
-
-		// Iterate over each driver
-		drivers.forEach((driver,driver_i) => {
-
-			var temp_data = value_fields.map(function(col) {
-				var x = driver.values[0][col];
-				if (x === undefined) {
-						x = 0;
-				} 
-				return x
-			});
-
-			// Create nodes based on absolute count.
-			var cnt_so_far = 0;
-
-			temp_data.forEach(function(d,i) {
-				var new_nodes = range(d).map( x => {
-						return {
-							id: driver.key + i.toString() + '_' + x.toString(),
-							color: Const.colorScale(driver.values[0].constructorRef),
-							stroke: Const.toaddStroke(driver.key, driver.values[0].season) ? 'black': 'white',
-							cx: xScale(value_fields_str[i]),
-							cy: yScale(driver.values[0].constructorRef),
-							season: driver.values[0].season,
-							driverRef: driver.key
-						};
-				});
-				nodes = nodes.concat(new_nodes);
-				cnt_so_far += d;
-			});
-		
-		drivers[driver_i].cnt = cnt_so_far;
-		})
-		//console.log(nodes)
-		
-		return {nodes:nodes, xscale:xScale, yscale:yScale}
-	}
-
 
 	render() {
-		const nodes = this.createNodes(this.props.lapsData, this.xScale, this.yScale)
+		
+		const {lapsData, resultsData} = this.props
 
-		const xbandSize = nodes.xscale.bandwidth()
-		const ybandSize = nodes.yscale.bandwidth()
+    var min_time = Const.round5(min(lapsData.map(d=>d.time)))
+    var max_time = Const.round5(max(lapsData.map(d=>d.time)))
+    if(max_time>150){
+      max_time=150
+    }
+    this.xScale.domain([min_time-5, max_time])
+		this.yScale.domain(Const.teamColors.map(d=>d.key))
 
 		const xProps = {
 			orient: 'Bottom',
-			scale: nodes.xscale,
-			translate: `translate(-${xbandSize/2}, ${this.svgDimensions.height})`,
-			tickSize: 0
+			scale: this.xScale,
+			translate: `translate(0, ${this.svgDimensions.height})`,
+      tickSize: this.svgDimensions.height,
+			tickValues: range(min_time-5, max_time+1, 5)
 		}
 
 		const yProps = {
 			orient: 'Left',
-			scale: nodes.yscale,
-			translate: `translate(${this.margins.left}, -${ybandSize/2})`,
-			tickSize: 0,
-			tickValues: nodes.yscale.domain()
+			scale: this.yScale,
+			translate: `translate(${this.margins.left}, 0)`,
+			tickSize: -10,
+			tickValues: this.yScale.domain()
 		}
 
+		const lapsData_new = lapsData.map(d => {
+			return {
+				id: d.id,
+				//color: Const.driverColors.filter(c => (c.driverRef == d.driverRef) && (c.season == d.season))[0].value, Note: using driverColors list may not be accurate, because recent seasons have shown that there may be mid-season driver changes
+				color: Const.colorScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
+				stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white',
+				x: this.xScale(d.time),
+				y: this.yScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
+				driverRef: d.driverRef,
+				time: d.time
+			}
+		})
+		//console.log(lapsData_new)
+		
 		const chart = {
 			width: this.svgDimensions.width,
 			height: this.wrapper.height,
@@ -141,44 +80,24 @@ class BeeswarmPlot extends Component {
 			height: this.wrapper.height,
 		}
 
-		if (nodes.nodes.length != 0) {
-			var forces = 
-					<ForceGraph
-						nodes={nodes.nodes}
-						svgDimensions={this.svgDimensions}
-					/>
-		 } else {
-			var forces = <Loading/>
-		}
-
 		return (
 			<div style={wrap}>
 				<div id ='yaxis' style={{float:'left'}}>
 					<svg width={this.margins.left} height={this.wrapper.height}>
-						<Axis {...yProps} />
+						<Axis {...yProps} /> 
 					</svg>
 				</div>
-				<div id='chart' style={chart}>
-					<svg width={this.wrapper.width*2} height={this.wrapper.height}>
-						<g style={{overflow:"auto"}}>
-							// use React to draw all the nodes, d3 already calculated the x and y
-							{forces}
-							<text 
-								style={Const.textStyle}
-								transform={"translate(" + (this.svgDimensions.width/2) + "," + (this.svgDimensions.height+40) + ")"}>
-								Time to complete (in sec)
-							</text>
-							<text
-								style={Const.topLegendStyle}
-								transform={"translate(" + (this.margins.left) + "," + 10 + ")"}>
-									Laps where driver made a pitstop are not included. Only laptimes completed within 85 to 110 seconds are included.
-							</text>
-						</g>
-						<Axis {...xProps} />
-					</svg>
-				</div>
+        <div id='chart' style={chart}>
+          <svg width={this.wrapper.width*4} height={this.wrapper.height}>
+            <g style={{overflow:"auto"}} transform={"translate(" + 20 + "," + 0 + ")"}>
+              <ForceGraph nodes={lapsData_new}/>
+              <Axis {...xProps} />
+            </g>
+          </svg>
+        </div>
 			</div>
 		)
+
 	}
 
 }

@@ -29,8 +29,9 @@ class LaptimesScatter extends Component {
 			counter: 0
 		}
 
-		this.wrapper = { width: Const.width, height: Const.height }
-		this.margins = { top: 30, right: 0, bottom: 0, left: 80 }
+    this.axisSpace = { width: 30, height: 20 }
+		this.wrapper = { width: Const.width-this.axisSpace.width, height: Const.height-this.axisSpace.height }
+		this.margins = { top: 30, right: 20, bottom: 20, left: 40 }
 		this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
 													 height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
@@ -200,14 +201,30 @@ class LaptimesScatter extends Component {
 					/>
 					{Title}
 				</div>
-					{Others}
-				<div>
-				<svg width={this.svgDimensions.width} height={this.svgDimensions.height} ref='svg'>
-					<g transform={"translate(" + (this.margins.left) + "," + (this.margins.top) + ")"}>
-						{LapsChart}
-					</g>
-				</svg>
-				</div>
+				{Others}
+        <div>
+          <svg width={this.wrapper.width} height={this.axisSpace.height}>
+            <text 
+              style={Const.textStyle}
+              transform={"translate(" + (this.wrapper.width/2) + "," + (this.axisSpace.height/2) + ")"}>
+              LAP NUMER
+            </text>
+          </svg>
+          <div>
+            <svg width={this.axisSpace.width} height={this.wrapper.height}>
+              <text 
+                style={Const.textStyle}
+                transform={"translate(" + (this.axisSpace.width/2) + "," + (this.wrapper.height/2) + ")rotate(-90)"}>
+                Time to complete (in sec)
+              </text>
+            </svg>
+    				<svg width={this.wrapper.width} height={this.wrapper.height} ref='svg'>
+    					<g transform={"translate(" + (this.margins.left) + "," + (this.margins.top) + ")"}>
+    						{LapsChart}
+    					</g>
+    				</svg>
+          </div>
+        </div>
 				<div>
 					{legend}
 				</div>

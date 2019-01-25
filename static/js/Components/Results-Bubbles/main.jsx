@@ -103,8 +103,7 @@ class Bubbles extends Component {
 		//console.log(maxLaps)
 
 		graph.data.map((d,i) => { 
-			var tmp = maxLaps.filter((x,idx) => (x.key == d.roundId))
-			d.maxLaps = tmp[0].value
+			d.maxLaps = maxLaps.filter((x,idx) => (x.key == d.roundId))[0].value
 		})
 		//console.log(graph.data)
 			 

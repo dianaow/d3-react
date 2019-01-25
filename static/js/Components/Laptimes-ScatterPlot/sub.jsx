@@ -4,22 +4,40 @@ import { min, max, range } from 'd3-array';
 import Dots from './DotsWithTooltips'
 import Axis from '../../Shared-components/Axis'
 import Tooltip from '../../Shared-components/Tooltip'
+import Loading from '../../Shared-components/Loading';
 import * as Const from '../../Shared-components/Constants';
 
 class ScatterPlot extends Component {
 
 	constructor(props) {
 		super(props)
-		this.newScales = this.updateD3(this.props)
+		
+    this.wrapper = { width: props.width, height: props.height }
+    this.margins = { top:30, right: 20, bottom: 20, left: 40 }
+    this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
+                           height: this.wrapper.height - this.margins.top - this.margins.bottom}
+
+    this.xScale = scaleLinear()
+                    .rangeRound([0, this.svgDimensions.width])
+
+    this.yScale = scaleLinear()
+                    .rangeRound([this.svgDimensions.height, 0])
 
 		this.state = {
+      data:[],
+      xProps:"",
+      yProps:"",
 			tooltip:{ display:false,data:{key:'',value:''}}
 		}
 	}
 
+  componentDidMount() {
+    this.updateD3()
+  }
+
 	componentDidUpdate(prevProps) {
 		if (this.props.zoomTransform !== prevProps.zoomTransform) {
-			this.newScales = this.updateD3(this.props)
+			this.updateD3()
 		}
 	}
 
@@ -49,33 +67,33 @@ class ScatterPlot extends Component {
 		})
 	}
 
-	updateD3(props) {
+	updateD3 = () => {
 
-		const { lapsData, resultsData, zoomTransform, zoomType } = props
+		const { lapsData, resultsData, zoomTransform, zoomType } = this.props
 
-		let transformX = ""
-		let transformY = "" 
+    var min_time = Const.round5(min(lapsData.map(d=>d.time)))
+    var max_time = Const.round5(max(lapsData.map(d=>d.time)))
+    if(max_time>150){
+      max_time=150
+    }
+    this.yScale.domain([min_time-10, max_time])
 
-		this.wrapper = { width: props.width, height: props.height }
-		this.margins = { top: 30, right: 0, bottom: 0, left: 80 }
-		this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
-													 height: this.wrapper.height - this.margins.top - this.margins.bottom}
+    var max_lap = Const.round5(max(lapsData.map(d=>d.lap)))
+    this.xScale.domain([0, max_lap])
 
-		this.xScale = scaleLinear()
-										.domain([0,60])
-										.rangeRound([this.margins.left, this.svgDimensions.width-this.margins.left])
+    const xProps = {
+      orient: 'Top',
+      scale: this.xScale,
+      translate: `translate(0, ${this.svgDimensions.height})`,
+      tickSize: -this.svgDimensions.height,
+      tickValues: range(0, max_lap+1, 5)
+    }
 
-		this.yScale = scaleLinear()
-										.domain([70,140])
-										.rangeRound([this.svgDimensions.height-15, 15])
-
+    var transformY=""
 		if (zoomTransform) {
 			if ((zoomTransform == -1) & (zoomType == 'reset')) {
 				transformY = this.yScale
-				console.log("Reset zoom")
-			} else if ((zoomTransform == -1) & (zoomType == 'preset')) {
-				transformY = this.yScale.domain([85, 95])
-				console.log("Zoom preset")
+				//console.log("Reset zoom")
 			} else {
 				transformY = zoomTransform.rescaleY(this.yScale)
 			}
@@ -83,69 +101,58 @@ class ScatterPlot extends Component {
 			transformY = this.yScale
 		}
 
-		return transformY
+    const yProps = {
+      orient: 'Left',
+      scale: transformY,
+      translate: `translate(0, 0)`,
+      tickSize: this.svgDimensions.width,
+      ticks: 10
+    }
+
+	   const lapsData_new = lapsData.map(d => {
+      return {
+        id: d.id,
+        //color: Const.driverColors.filter(c => (c.driverRef == d.driverRef) && (c.season == d.season))[0].value, Note: using driverColors list may not be accurate, because recent seasons have shown that there may be mid-season driver changes
+        color: Const.colorScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
+        stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white',
+        x: this.xScale(d.lap),
+        y: transformY(d.time),
+        driverRef: d.driverRef,
+        time: d.time
+      }
+    })
+    console.log(lapsData_new)
+
+    this.setState({data: lapsData_new, xProps: xProps, yProps: yProps})
 	}
 
-	render() {
+ 	render() {
 		
-		const {lapsData, resultsData} = this.props
-		const yScale = this.newScales
-		const xScale = this.xScale
+		const {data, xProps, yProps, tooltip} = this.state
 
-		const xProps = {
-			orient: 'Top',
-			scale: xScale,
-			translate: `translate(0, ${this.svgDimensions.height})`,
-			tickSize: -this.svgDimensions.height+15,
-			tickValues: range(1,65,5)
-		}
+    if(data.length != 0){
+      var xaxis = <Axis {...xProps} />
+      var yaxis = <Axis {...yProps} />
+      var dots = <Dots
+        data={data}
+        onMouseOverCallback={this.handleMouseOver}
+        onMouseOutCallback={this.handleMouseOut}
+        tooltip={this.state.tooltip}
+        options={{pre:"scatter_"}}
+      />
+    } else {
+      var xaxis = <div></div>
+      var yaxis = <div></div>
+      var dots = <Loading/>
+    }
 
-		const yProps = {
-			orient: 'Left',
-			scale: yScale,
-			translate: `translate(${this.margins.left}, 0)`,
-			tickSize: this.svgDimensions.width,
-			ticks:8
-		}
-
-		const lapsData_new = lapsData.map(d => {
-			return {
-				id: d.id,
-				//color: Const.driverColors.filter(c => (c.driverRef == d.driverRef) && (c.season == d.season))[0].value, Note: using driverColors list may not be accurate, because recent seasons have shown that there may be mid-season driver changes
-				color: Const.colorScale(resultsData.filter(c=> (c.driverRef == d.driverRef) && (c.season == d.season) && (c.raceName == d.raceName))[0].constructorRef),
-				stroke: Const.toaddStroke(d.driverRef, d.season) ? 'black': 'white',
-				x: xScale(d.lap),
-				y: yScale(d.time),
-				driverRef: d.driverRef,
-				time: d.time
-			}
-		})
-		//console.log(lapsData_new)
-		
 		return (
-			<React.Fragment>
-				<Axis {...xProps} />
-				<Axis {...yProps} />
-				<Dots
-					data={lapsData_new}
-					onMouseOverCallback={this.handleMouseOver}
-					onMouseOutCallback={this.handleMouseOut}
-					tooltip={this.state.tooltip}
-				/>
-				<Tooltip
-					tooltip={this.state.tooltip}
-				/> 
-				<text 
-					style={Const.textStyle}
-					transform={"translate(" + (this.svgDimensions.width/2) + "," + 0 + ")"}>
-					LAP NUMER
-				</text>
-				<text 
-					style={Const.textStyle}
-					transform={"translate(" + 0 + "," + (this.svgDimensions.height/2) + ")rotate(-90)"}>
-					Time to complete (in sec)
-				</text>
-			</React.Fragment>
+      <React.Fragment>
+        {xaxis}
+        {yaxis}
+        {dots}
+        <Tooltip tooltip={tooltip}/> 
+      </React.Fragment>
 		)
 
 	}

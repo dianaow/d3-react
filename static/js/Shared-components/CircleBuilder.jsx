@@ -17,12 +17,12 @@ function getOptionOrDefault(key, options, defaultOptions) {
 
 export const drawCircle = (data, options) => {
 	
-	var strokeWidth = getOptionOrDefault('strokeWidth', options);
-    var radius = getOptionOrDefault('radius', options);
-    var opacity = getOptionOrDefault('opacity', options);
-    var pre = getOptionOrDefault('pre', options);
+  var strokeWidth = getOptionOrDefault('strokeWidth', options);
+  var radius = getOptionOrDefault('radius', options);
+  var opacity = getOptionOrDefault('opacity', options);
+  var pre = getOptionOrDefault('pre', options);
     
-    return data.map((d,i) =>
+  return data.map((d,i) =>
 	  <circle
 	  	className={pre + i}
 	    key={d.id}
@@ -39,12 +39,12 @@ export const drawCircle = (data, options) => {
 
 export const drawCircleInteractive = (data, options, onMouseOverCallback, onMouseOutCallback) => {
 	
-	var strokeWidth = getOptionOrDefault('strokeWidth', options);
-    var radius = getOptionOrDefault('radius', options);
-    var opacity = getOptionOrDefault('opacity', options);
-    var pre = getOptionOrDefault('pre', options);
-    
-    return data.map((d,i) =>
+  var strokeWidth = getOptionOrDefault('strokeWidth', options);
+  var radius = getOptionOrDefault('radius', options);
+  var opacity = getOptionOrDefault('opacity', options);
+  var pre = getOptionOrDefault('pre', options);
+  
+  return data.map((d,i) =>
 	  <circle
 	  	className={pre + i}
 	    key={d.id}
