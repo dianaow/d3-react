@@ -76,7 +76,8 @@ class LaptimesScatter extends Component {
 		var currentSeason = this.state.seasons.find(d => (d.selected === true))
 		var currentRace = this.state.races.find(d => (d.selected === true))
 		if(this.state.counter != prevState.counter){
-			//console.log('updating', currentSeason.season, currentRace.roundId) verify its doesn't loop infinitely, correct parameters sent to API request
+      //verify its doesn't loop infinitely, correct parameters sent to API request
+			console.log('updating', currentSeason.season, currentRace.roundId) 
 			this.fetchLaptimes(currentSeason.season, currentRace.roundId)
 		}
 
@@ -215,7 +216,7 @@ class LaptimesScatter extends Component {
               <text 
                 style={Const.textStyle}
                 transform={"translate(" + (this.axisSpace.width/2) + "," + (this.wrapper.height/2) + ")rotate(-90)"}>
-                Time to complete (in sec)
+                Time to complete a lap(in sec)
               </text>
             </svg>
     				<svg width={this.wrapper.width} height={this.wrapper.height} ref='svg'>
@@ -225,7 +226,7 @@ class LaptimesScatter extends Component {
     				</svg>
           </div>
         </div>
-				<div>
+				<div style={{paddingTop: '20px', paddingBottom: '20px'}}>
 					{legend}
 				</div>
 			</div>

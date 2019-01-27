@@ -39,6 +39,9 @@ class ScatterPlot extends Component {
 		if (this.props.zoomTransform !== prevProps.zoomTransform) {
 			this.updateD3()
 		}
+    if (this.props.lapsData !== prevProps.lapsData) {
+      this.updateD3()
+    }  
 	}
 
 	handleMouseOver = (e) => {
@@ -70,7 +73,7 @@ class ScatterPlot extends Component {
 	updateD3 = () => {
 
 		const { lapsData, resultsData, zoomTransform, zoomType } = this.props
-
+ 
     var min_time = Const.round5(min(lapsData.map(d=>d.time)))
     var max_time = Const.round5(max(lapsData.map(d=>d.time)))
     if(max_time>150){

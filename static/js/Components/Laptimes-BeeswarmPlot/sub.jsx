@@ -13,7 +13,7 @@ class BeeswarmPlot extends Component {
 		super(props)
 
 		this.wrapper = { width: Const.width, height: Const.height}
-		this.margins = { top: 60, right: 0, bottom: 0, left: 100 }
+		this.margins = { top: 20, right: 0, bottom: 0, left: 100 }
 		this.svgDimensions = { width: this.wrapper.width - this.margins.left - this.margins.right, 
 													 height: this.wrapper.height - this.margins.top - this.margins.bottom}
 
@@ -77,7 +77,7 @@ class BeeswarmPlot extends Component {
 
 		const wrap = {
 			minWidth: this.wrapper.width,
-			height: this.wrapper.height,
+			height: this.wrapper.height
 		}
 
 		return (
@@ -94,6 +94,9 @@ class BeeswarmPlot extends Component {
               <Axis {...xProps} />
             </g>
           </svg>
+        </div>
+        <div style={Const.textStyle} width={this.svgDimensions.width} height={20}>
+          <span style={{paddingBottom: 20}}>Time to complete a lap(in sec)</span>
         </div>
 			</div>
 		)

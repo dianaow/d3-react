@@ -141,6 +141,7 @@ class LaptimesBeeswarm extends Component {
           />
           {Title}
         </div>
+        <span style={Const.topLegendStyle}>Hover over dots to show driver label and corresponding laptime</span>
         <div>
           {LapsChart}
         </div>

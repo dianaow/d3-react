@@ -97,6 +97,7 @@ class ResultsBar extends Component {
 					/>
 					{Title}
 				</div>
+        <span style={Const.topLegendStyle}>Points are awarded as follows: 1st place - 25 points; 2nd -18; 3rd - 15; 4th -12; 5th - 10; 6th - 8; 7th - 6; 8th - 4; 9th - 2; 10th - 1</span>
 				<div id='stackedBarChart'>
 					{ResultsChart}
 				</div>

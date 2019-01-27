@@ -53,7 +53,6 @@ class BarChart extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.props !== prevProps) {
       this.stopIteration()
-      this.setState({counter: 0})
       this.restructureData(this.props.raceData)
       this.initIteration()
     }
@@ -147,7 +146,7 @@ class BarChart extends Component {
     })
    // console.log(stackedData)
 
-    this.setState({data:stackedData, races}, this.initialRender)
+    this.setState({data:stackedData, races, counter: 0}, this.initialRender)
   }
 
   initialRender = () => {
@@ -168,9 +167,11 @@ class BarChart extends Component {
       .attr('class', 'bars-group')
       .attr('transform', `translate(${this.axisSpace.width + this.margins.left}, ${this.margins.top})`)
 
-    container.selectAll("rect") 
-      .data(flattened)
-      .enter().append("rect")
+    var bars = container.selectAll("rect") 
+      .data(flattened, d=>d.key)
+
+    bars.enter().append("rect")
+        .merge(bars, d=>d.key)
         .classed("transformed", true)
         .style("mix-blend-mode", "multiply")
         .attr("key", d =>d.key)
@@ -226,7 +227,7 @@ class BarChart extends Component {
       .data(flattened_acc)
 
     bars.enter().append("rect")
-        .merge(bars)
+        .merge(bars, d=>d.key)
         .style("mix-blend-mode", "multiply")
         .attr("key", d =>d.key)
         .attr("fill", d=>d.color)
@@ -234,8 +235,6 @@ class BarChart extends Component {
         .attr("y", d => d.y)
         .attr("width", d => d.width)
         .attr("height", d => d.height)
-
-    bars.exit().remove()
 
     // Retrieve the sort order of bars of current race/iteration
     let currentRace = this.state.data.filter(d => d.index == this.state.counter)

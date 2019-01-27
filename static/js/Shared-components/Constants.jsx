@@ -107,6 +107,7 @@ export const colorScale = scaleOrdinal()
 
 // STYLES
 export const textStyle = {
+  textAlign: 'center',
   textAnchor: 'middle',
   fontWeight: 'bold',
   textTransform: 'uppercase',
@@ -120,7 +121,7 @@ export const legendStyle = {
 
 export const topLegendStyle = {
   color: '#d3d3d3',
-  fontSize: '0.8em',
+  fontSize: '1em',
   padding: '10px'
 } 
 
