@@ -23,7 +23,7 @@ export default class Dots extends Component {
 
 	render() {
 		const { data, tooltip, onMouseOverCallback, onMouseOutCallback, options } = this.props
-    console.log(this.props.options)
+
     var pre = getOptionOrDefault('pre', options);
     var strokeWidth = getOptionOrDefault('strokeWidth', options);
     var hover_radius = getOptionOrDefault('hover_radius', options);

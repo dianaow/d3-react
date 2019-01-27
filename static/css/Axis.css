@@ -1,22 +1,23 @@
 .Axis line {
   stroke: #E0E0E0;
 }
-
 .Axis path {
   display: none;
 }
 .Axis text {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
+  font-size: 1.2em;
   fill: black;
 }
-
 .Axis-Bottom text {
  text-anchor: "middle";
  alignment-baseline: "middle";
 }
-
 .Axis-Left text {
   text-anchor: "middle";
   alignment-baseline: "end";
+}
+.Axis-top text{
+  font-weight: 'bold';
+  font-size: 1.4em;
 }

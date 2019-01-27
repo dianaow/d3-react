@@ -121,7 +121,7 @@ class ScatterPlot extends Component {
         time: d.time
       }
     })
-    console.log(lapsData_new)
+    //console.log(lapsData_new)
 
     this.setState({data: lapsData_new, xProps: xProps, yProps: yProps})
 	}

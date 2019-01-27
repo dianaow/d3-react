@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import { max, min, quantile } from 'd3-array';
 import { selectAll } from 'd3-selection'
-import BarChart from './sub'
+import BarChart from './sub1'
 import Dropdown from '../../Shared-components/Dropdown';
 import Loading from '../../Shared-components/Loading';
 import Header from '../../Shared-components/Header'

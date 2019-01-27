@@ -35,7 +35,7 @@ class BarChart extends Component {
 			orient: 'Left',
 			scale: yScale,
 			translate: `translate(${margins.left}, 0)`,
-			tickSize: 0,
+			tickSize: -10,
 			tickValues: range(0, 24+1, 2)
 		}
 
